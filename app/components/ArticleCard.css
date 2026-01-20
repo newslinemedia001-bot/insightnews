@@ -1,0 +1,139 @@
+/* Article Card Styles */
+.article-card {
+    background-color: white;
+    border: 1px solid var(--border-gray);
+    border-radius: 4px;
+    overflow: hidden;
+    transition: box-shadow 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.article-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.article-image {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+    background-color: var(--bg-light-gray);
+}
+
+.article-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.article-card:hover .article-image img {
+    transform: scale(1.05);
+}
+
+.article-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: var(--primary-red);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-radius: 2px;
+}
+
+.article-content {
+    padding: 1rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.article-title {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.125rem;
+    font-weight: bold;
+    line-height: 1.4;
+    flex: 1;
+}
+
+.article-title a {
+    color: var(--text-primary);
+    transition: color 0.3s ease;
+}
+
+.article-title a:hover {
+    color: var(--primary-red);
+    opacity: 1;
+}
+
+.article-excerpt {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    margin-bottom: 0.75rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.article-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.75rem;
+    color: var(--text-meta);
+    margin-top: auto;
+}
+
+.article-category {
+    text-transform: uppercase;
+    font-weight: bold;
+    color: var(--primary-red);
+}
+
+.article-time {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+/* Featured Article */
+.article-card.featured {
+    border: none;
+    border-radius: 0;
+}
+
+.article-card.featured .article-image {
+    aspect-ratio: 16 / 7;
+}
+
+.article-card.featured .article-title {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+}
+
+.article-card.featured .article-content {
+    padding: 1.5rem;
+}
+
+.article-card.featured .article-excerpt {
+    font-size: 1rem;
+    -webkit-line-clamp: 4;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .article-card.featured .article-title {
+        font-size: 1.5rem;
+    }
+
+    .article-title {
+        font-size: 1rem;
+    }
+}

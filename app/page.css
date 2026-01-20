@@ -1,0 +1,662 @@
+/* Homepage 3-Column Layout */
+.site-wrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-content {
+    flex: 1;
+    padding: 1.5rem 0;
+    background-color: white;
+}
+
+/* Main Layout */
+.three-column-layout {
+    display: grid;
+    grid-template-columns: 210px 1fr 300px;
+    grid-template-rows: auto auto auto;
+    gap: 20px;
+    align-items: start;
+}
+
+/* Row 1: Full width Green Title Line */
+.breaking-news-header-span {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    margin-bottom: 0;
+}
+
+/* Row 2: Black Breaking Hero spanning Left + Center columns */
+.breaking-hero-span {
+    grid-column: 1 / span 2;
+    grid-row: 2;
+    margin-bottom: 5px;
+    /* Reduced from 20px */
+}
+
+/* Right Sidebar spanning Row 2 and 3 */
+.right-sidebar {
+    grid-column: 3;
+    grid-row: 2 / span 2;
+}
+
+/* Row 3: Left Sidebar starting below the Black Card */
+.left-sidebar {
+    grid-column: 1;
+    grid-row: 3;
+}
+
+/* Row 3: Center Content starting below the Black Card */
+.center-content {
+    grid-column: 2;
+    grid-row: 3;
+    min-width: 0;
+}
+
+/* Section Title Bar */
+.section-title-bar {
+    text-align: left;
+    padding: 2px 0;
+    margin-bottom: 1rem;
+    border-top: 1px solid #ccc;
+    border-bottom: 2px solid #000;
+}
+
+.section-title-bar h2 {
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0;
+    margin: 0;
+    color: #000;
+    background-color: #f0f0f0;
+    display: inline-block;
+    padding: 2px 8px;
+}
+
+/* Breaking News Section */
+.breaking-news-section {
+    margin-bottom: 2rem;
+}
+
+/* Breaking Hero - Main Story */
+.breaking-hero {
+    display: flex;
+    gap: 1rem;
+    background-color: #000;
+    color: white;
+    margin-bottom: 1rem;
+    padding: 1rem;
+}
+
+.breaking-hero-image {
+    position: relative;
+    width: 280px;
+    flex-shrink: 0;
+}
+
+.breaking-hero-image img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    display: block;
+}
+
+.breaking-hero-image .breaking-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background-color: var(--primary-red);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: bold;
+    padding: 0.3rem 0.7rem;
+    text-transform: uppercase;
+}
+
+.breaking-hero-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    padding-right: 50px;
+}
+
+.breaking-hero-text .breaking-badge {
+    display: inline-block;
+    align-self: flex-start;
+    background-color: var(--primary-red);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 3px 8px;
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+}
+
+.breaking-hero-text h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    line-height: 1.3;
+    margin: 0 0 0.75rem 0;
+    color: white;
+}
+
+.breaking-hero-text p {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.hero-arrow-btn {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: var(--primary-red);
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.hero-arrow-btn:hover {
+    background-color: #d32f2f;
+    transform: translateY(-50%) scale(1.1);
+}
+
+.hero-arrow-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* Newspaper Reviews Section */
+.newspaper-reviews-section {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-gray);
+}
+
+.newspaper-reviews-section img {
+    width: 280px;
+    height: auto;
+    flex-shrink: 0;
+    border: 1px solid var(--border-gray);
+}
+
+.review-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.review-content h4 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1.3;
+    margin: 0.5rem 0;
+    color: var(--text-primary);
+}
+
+.review-excerpt {
+    font-size: 0.85rem;
+    color: #444;
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+}
+
+.review-content .review-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    font-size: 0.7rem;
+    color: var(--text-meta);
+}
+
+.review-content .review-meta .category {
+    color: #000;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+/* Newspaper Reviews - Legacy styles (can be removed if not used) */
+.newspaper-reviews-full {
+    width: 100%;
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.newspaper-reviews-full img {
+    width: 350px;
+    height: auto;
+    flex-shrink: 0;
+    border: 1px solid var(--border-gray);
+}
+
+.newspaper-reviews-full .review-title {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.newspaper-reviews-full .review-title h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.4;
+    margin: 0 0 0.6rem 0;
+    color: var(--text-primary);
+}
+
+.newspaper-reviews-full .review-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--text-meta);
+}
+
+.newspaper-reviews-full .review-meta .category {
+    color: var(--text-meta);
+    font-weight: 500;
+}
+
+.newspaper-reviews {
+    width: 280px;
+    flex-shrink: 0;
+}
+
+.newspaper-reviews img {
+    width: 100%;
+    height: auto;
+    margin-bottom: 0.75rem;
+    border: 1px solid var(--border-gray);
+}
+
+.review-title h4 {
+    font-size: 0.875rem;
+    font-weight: bold;
+    line-height: 1.4;
+    margin: 0 0 0.5rem 0;
+    color: var(--text-primary);
+}
+
+.review-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+    color: var(--text-meta);
+}
+
+.review-meta .category {
+    color: var(--primary-red);
+    font-weight: bold;
+}
+
+/* News Grid (below breaking news) - Text-focused like Tuko */
+.news-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-bottom: 0;
+    border-top: 1px solid var(--border-gray);
+}
+
+.news-item {
+    position: relative;
+    border-bottom: 1px solid var(--border-gray);
+    overflow: hidden;
+    background-color: white;
+    display: flex;
+    gap: 0.75rem;
+    padding: 0.75rem 0;
+    align-items: flex-start;
+}
+
+.news-item img {
+    width: 80px;
+    height: 60px;
+    object-fit: cover;
+    flex-shrink: 0;
+    display: block;
+}
+
+.exclusive-badge {
+    position: absolute;
+    top: 0.75rem;
+    left: 0;
+    background-color: var(--primary-red);
+    color: white;
+    font-size: 0.6rem;
+    font-weight: bold;
+    padding: 0.2rem 0.4rem;
+    text-transform: uppercase;
+    z-index: 1;
+}
+
+.news-item-content {
+    flex: 1;
+    padding: 0;
+}
+
+.news-item.text-only {
+    padding: 1rem 0;
+}
+
+.news-item-content h4 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1.3;
+    margin: 0.4rem 0 0 0;
+    color: var(--text-primary);
+}
+
+.news-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    font-size: 0.65rem;
+    color: var(--text-meta);
+    margin-bottom: 0.2rem;
+}
+
+.news-meta .category {
+    color: #000;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+/* Category Sections - Text-focused like Tuko */
+.category-section {
+    margin-bottom: 2.5rem;
+}
+
+.category-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border-top: 1px solid var(--border-gray);
+}
+
+.category-article {
+    position: relative;
+    border-bottom: 1px solid var(--border-gray);
+    overflow: hidden;
+    background-color: white;
+    display: flex;
+    gap: 0.75rem;
+    padding: 0.75rem 0;
+    align-items: flex-start;
+}
+
+.category-article img {
+    width: 80px;
+    height: 60px;
+    object-fit: cover;
+    flex-shrink: 0;
+    display: block;
+}
+
+.article-ribbon {
+    position: absolute;
+    top: 0.75rem;
+    left: 0;
+    background-color: var(--primary-red);
+    color: white;
+    font-size: 0.6rem;
+    font-weight: bold;
+    padding: 0.2rem 0.5rem;
+    text-transform: uppercase;
+    z-index: 1;
+}
+
+.category-article.text-only {
+    padding: 1rem 0;
+}
+
+.category-article h4 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1.3;
+    margin: 0.4rem 0 0 0;
+    padding: 0;
+    color: var(--text-primary);
+}
+
+.article-meta {
+    padding: 0;
+    font-size: 0.65rem;
+    color: var(--text-meta);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 0.2rem;
+}
+
+/* Horizontal Grid for full-width category sections */
+.horizontal-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 1.5rem !important;
+    flex-direction: row !important;
+    border-top: none !important;
+}
+
+.horizontal-grid .category-article {
+    border-bottom: none !important;
+    padding: 0 !important;
+}
+
+.full-width-sections {
+    margin-top: 2rem;
+    border-top: 1px solid var(--border-gray);
+    padding-top: 2rem;
+}
+
+/* Image Grid Sections (Most Shared, Entertainment, People) */
+.most-shared-section {
+    background-color: var(--secondary-green);
+    padding: 2rem 1rem;
+    margin: 2rem 0;
+}
+
+.most-shared-section .green-line-header {
+    border-bottom-color: rgba(255, 255, 255, 0.3);
+}
+
+.most-shared-section .green-line-header h2 {
+    background-color: var(--secondary-green);
+    color: white;
+}
+
+.most-shared-section .image-article h4 {
+    color: white;
+}
+
+.most-shared-section .article-meta,
+.most-shared-section .article-meta span {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.category-image-grid-section {
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+}
+
+.green-line-header {
+    text-align: center;
+    border-bottom: 2px solid var(--secondary-green);
+    margin-bottom: 1.5rem;
+    position: relative;
+    height: 10px;
+}
+
+.green-line-header h2 {
+    display: inline-block;
+    background: white;
+    padding: 0 15px;
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--secondary-green);
+    text-transform: uppercase;
+    position: absolute;
+    top: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.image-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+
+.image-article {
+    display: flex;
+    flex-direction: column;
+}
+
+.article-image-wrapper {
+    position: relative;
+    margin-bottom: 0.75rem;
+    overflow: hidden;
+}
+
+.article-image-wrapper img {
+    width: 100%;
+    aspect-ratio: 16/10;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.image-article:hover .article-image-wrapper img {
+    transform: scale(1.05);
+}
+
+.corner-ribbon {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 40px 40px 0 0;
+    border-color: var(--primary-red) transparent transparent transparent;
+    z-index: 1;
+}
+
+.image-article .exclusive-badge {
+    position: static;
+    display: inline-block;
+    background: none;
+    color: var(--primary-red);
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 0;
+    margin-bottom: 0.25rem;
+    text-transform: uppercase;
+}
+
+.image-article .exclusive-badge.breaking {
+    color: var(--primary-red);
+}
+
+.image-article h4 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1.3;
+    margin: 0 0 0.5rem 0;
+    color: #000;
+}
+
+.image-article .article-meta {
+    margin-top: auto;
+}
+
+.center-content {
+    min-width: 0;
+}
+
+/* Entertainment Grid - 2 per row optional? Tuko usually does 3 */
+.entertainment-grid {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .three-column-layout {
+        grid-template-columns: 180px 1fr 250px;
+        gap: 15px;
+    }
+
+    .breaking-hero {
+        flex-direction: column;
+    }
+
+    .breaking-hero-image {
+        width: 100%;
+    }
+
+    .newspaper-reviews-section {
+        flex-direction: column;
+    }
+
+    .newspaper-reviews-section img {
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .three-column-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .breaking-hero {
+        flex-direction: column;
+        padding: 0.75rem;
+    }
+
+    .breaking-hero-image {
+        width: 100%;
+    }
+
+    .breaking-hero-image img {
+        height: 150px;
+    }
+
+    .newspaper-reviews-section {
+        flex-direction: column;
+    }
+
+    .newspaper-reviews-section img {
+        width: 100%;
+    }
+
+    .news-item,
+    .category-article {
+        gap: 0.5rem;
+    }
+
+    .news-item img,
+    .category-article img {
+        width: 60px;
+        height: 45px;
+    }
+
+    .image-grid,
+    .horizontal-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
