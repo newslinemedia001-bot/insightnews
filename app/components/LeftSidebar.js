@@ -13,6 +13,9 @@ function formatDate(timestamp) {
 }
 
 export default function LeftSidebar({ articles = [] }) {
+    // Reduce articles to match middle column height
+    const displayArticles = articles.slice(0, 9);
+    
     return (
         <div className="left-sidebar-container">
             <div className="latest-header">
@@ -25,14 +28,13 @@ export default function LeftSidebar({ articles = [] }) {
             </div>
 
             <ul className="latest-stories-list">
-                {articles.map((story, index) => (
+                {displayArticles.map((story, index) => (
                     <li key={story.id || index} className="latest-story-item">
                         <a href={`/${story.slug}`}>
                             {index === 0 && story.image && (
                                 <div className="story-image">
                                     <img src={story.image} alt={story.title} />
                                     <span className="story-badge">LATEST</span>
-                                    {/* Removed play icon unless we have video content */}
                                 </div>
                             )}
                             <h4>{story.title}</h4>
@@ -43,7 +45,7 @@ export default function LeftSidebar({ articles = [] }) {
                         </a>
                     </li>
                 ))}
-                {articles.length === 0 && <li style={{ padding: '1rem' }}>No articles yet.</li>}
+                {displayArticles.length === 0 && <li style={{ padding: '1rem' }}>No articles yet.</li>}
             </ul>
         </div>
     );

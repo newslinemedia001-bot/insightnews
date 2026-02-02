@@ -4,15 +4,60 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import RightSidebar from '../components/RightSidebar';
 import '../page.css'; // Reusing main page styles
+import './article.css'; // Article-specific styles
 
-// Force dynamic rendering
+// Force dynamic rendering with caching
 export const dynamic = 'force-dynamic';
+export const revalidate = 60; // Cache for 60 seconds
+
+// Generate metadata for SEO
+export async function generateMetadata({ params }) {
+    const { slug } = await params;
+    const item = await getItem(slug);
+    
+    if (!item || item.type !== 'article') {
+        return {
+            title: 'Article Not Found',
+            description: 'The article you are looking for does not exist.'
+        };
+    }
+    
+    const article = item.data;
+    
+    return {
+        title: article.title,
+        description: article.description || article.summary || article.title,
+        keywords: article.tags ? article.tags.join(', ') : article.category,
+        authors: [{ name: article.author }],
+        openGraph: {
+            title: article.title,
+            description: article.description || article.summary,
+            images: article.image ? [article.image] : [],
+            type: 'article',
+            publishedTime: article.createdAt ? new Date(article.createdAt.seconds * 1000).toISOString() : undefined,
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: article.title,
+            description: article.description || article.summary,
+            images: article.image ? [article.image] : [],
+        },
+        robots: {
+            index: true,
+            follow: true,
+            googleBot: {
+                index: true,
+                follow: true,
+            },
+        },
+    };
+}
 
 async function getItem(slug) {
     // 1. Check if it matches a category
     // Capitalize first letter to match DB convention (e.g. 'politics' -> 'Politics')
     const categoryName = slug.charAt(0).toUpperCase() + slug.slice(1);
-    const knownCategories = ['Politics', 'Business', 'Entertainment', 'People', 'Family', 'Crime', 'Sports', 'Lifestyle', 'Technology', 'Kenya', 'World', 'Opinion'];
+    const knownCategories = ['News', 'Politics', 'Business', 'Entertainment', 'People', 'Family', 'Crime', 'Sports', 'Lifestyle', 'Technology', 'World', 'Opinion'];
 
     if (knownCategories.includes(categoryName)) {
         // Fetch articles for this category
@@ -28,7 +73,56 @@ async function getItem(slug) {
 
     if (!snapshot.empty) {
         const doc = snapshot.docs[0];
-        return { type: 'article', data: { id: doc.id, ...doc.data() } };
+        const articleData = { id: doc.id, ...doc.data() };
+        
+        // Fetch related articles from same category
+        const relatedQ = query(
+            collection(db, 'articles'), 
+            where('category', '==', articleData.category),
+            where('slug', '!=', slug),
+            orderBy('slug'),
+            orderBy('createdAt', 'desc'),
+            limit(4)
+        );
+        const relatedSnapshot = await getDocs(relatedQ);
+        const relatedArticles = relatedSnapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        
+        // Fetch latest articles for "Read Also" links and sidebar
+        const latestQ = query(
+            collection(db, 'articles'),
+            orderBy('createdAt', 'desc'),
+            limit(15)
+        );
+        const latestSnapshot = await getDocs(latestQ);
+        const latestArticles = latestSnapshot.docs
+            .map(d => ({ id: d.id, ...d.data() }))
+            .filter(a => a.slug !== slug); // Exclude current article
+        
+        // Fetch opinion articles for sidebar (with error handling)
+        let opinionArticles = [];
+        try {
+            const opinionQ = query(
+                collection(db, 'articles'),
+                where('category', '==', 'Opinion'),
+                orderBy('createdAt', 'desc'),
+                limit(5)
+            );
+            const opinionSnapshot = await getDocs(opinionQ);
+            opinionArticles = opinionSnapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        } catch (error) {
+            console.log('Opinion articles query failed, using latest instead');
+            // Fallback to latest articles if Opinion query fails
+            opinionArticles = latestArticles.slice(11, 16);
+        }
+        
+        return { 
+            type: 'article', 
+            data: articleData,
+            relatedArticles,
+            latestArticles: latestArticles.slice(0, 6),
+            sidebarLatest: latestArticles.slice(6, 11),
+            opinionArticles
+        };
     }
 
     return null;
@@ -100,32 +194,175 @@ export default async function Page({ params }) {
 
     // RENDER ARTICLE PAGE
     const article = item.data;
+    const relatedArticles = item.relatedArticles || [];
+    const latestArticles = item.latestArticles || [];
+    const sidebarLatest = item.sidebarLatest || [];
+    const opinionArticles = item.opinionArticles || [];
+    
+    // Function to inject Read Also links into content
+    function injectReadAlsoLinks(content, articles) {
+        if (!articles || articles.length === 0) return content;
+        
+        // Split content into paragraphs
+        const paragraphs = content.split('</p>');
+        if (paragraphs.length < 4) return content; // Need at least 4 paragraphs
+        
+        // Calculate positions to insert links (roughly 1/4, 1/2, 3/4 through the article)
+        const totalParas = paragraphs.length;
+        const positions = [
+            Math.floor(totalParas * 0.25),
+            Math.floor(totalParas * 0.5),
+            Math.floor(totalParas * 0.75)
+        ];
+        
+        // Insert Read Also links at calculated positions
+        positions.forEach((pos, idx) => {
+            if (articles[idx] && pos < paragraphs.length) {
+                const readAlsoLink = `<p class="inline-read-also-link"><strong>Read Also:</strong> <a href="/${articles[idx].slug}">${articles[idx].title}</a></p>`;
+                paragraphs[pos] = paragraphs[pos] + '</p>' + readAlsoLink;
+            }
+        });
+        
+        return paragraphs.join('</p>');
+    }
+    
+    // Inject Read Also links into article content
+    const contentWithReadAlso = injectReadAlsoLinks(article.content, latestArticles.slice(0, 3));
+    
     return (
         <div className="site-wrapper">
             <Header />
             <main className="main-content">
                 <div className="container">
-                    {/* Full width article view, no sidebar */}
-                    <div className="article-container" style={{ background: 'white', padding: '2rem', maxWidth: '900px', margin: '0 auto' }}>
-                        <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem', lineHeight: '1.2' }}>{article.title}</h1>
-                        <div className="article-meta" style={{ marginBottom: '1.5rem', color: '#666', fontSize: '0.9rem', borderBottom: '1px solid #eee', paddingBottom: '1rem', display: 'flex', alignItems: 'center' }}>
-                            <span style={{ marginRight: '1rem' }} className="author">By <strong>{article.author}</strong></span>
+                    {/* Article with Sidebar Layout */}
+                    <div className="article-with-sidebar">
+                    <div className="article-container">
+                        <h1 className="article-title">{article.title}</h1>
+                        
+                        {/* Summary Box */}
+                        {article.summary && (
+                            <div className="article-summary">
+                                <p>{article.summary}</p>
+                            </div>
+                        )}
+                        
+                        <div className="article-meta">
+                            <span className="author">By <strong>{article.author}</strong></span>
                             <span className="time">{formatDate(article.createdAt)}</span>
-                            <span style={{ marginLeft: 'auto', background: '#22c55e', color: 'white', padding: '4px 8px', borderRadius: '4px', textTransform: 'uppercase', fontSize: '0.8rem', fontWeight: 'bold' }}>{article.category}</span>
+                            <span className="category-badge">{article.category}</span>
                         </div>
 
                         {article.image && (
-                            <div className="article-featured-image" style={{ marginBottom: '2rem' }}>
-                                <img src={article.image} alt={article.title} style={{ width: '100%', maxHeight: '500px', objectFit: 'cover', borderRadius: '8px' }} />
+                            <div className="article-featured-image">
+                                <img src={article.image} alt={article.title} />
                             </div>
                         )}
 
-                        <div className="article-body" dangerouslySetInnerHTML={{ __html: article.content }} style={{ lineHeight: '1.8', fontSize: '1.15rem', color: '#1f2937' }} />
+                        {/* Article Content with injected Read Also links */}
+                        <div className="article-body">
+                            <div dangerouslySetInnerHTML={{ __html: contentWithReadAlso }} />
+                        </div>
+
+                        {/* Read Also Box at the end */}
+                        {latestArticles.length > 3 && (
+                            <div className="read-also-box-end">
+                                <h3>Read Also</h3>
+                                <ul>
+                                    {latestArticles.slice(3, 6).map(a => (
+                                        <li key={a.id}>
+                                            <a href={`/${a.slug}`}>{a.title}</a>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+
+                        {/* Tags Section */}
+                        {article.tags && article.tags.length > 0 && (
+                            <div className="article-tags">
+                                <strong>Tags:</strong>
+                                {article.tags.map(tag => (
+                                    <span key={tag} className="tag-item">{tag}</span>
+                                ))}
+                            </div>
+                        )}
+
+                        {/* Related Articles Section */}
+                        {relatedArticles.length > 0 && (
+                            <div className="related-articles-section">
+                                <h2>RELATED ARTICLES</h2>
+                                <div className="related-articles-grid">
+                                    {relatedArticles.map(related => (
+                                        <article key={related.id} className="related-article-card">
+                                            <a href={`/${related.slug}`}>
+                                                {related.image && (
+                                                    <div className="related-article-image">
+                                                        <img src={related.image} alt={related.title} />
+                                                        <span className="related-category-badge">{related.category}</span>
+                                                    </div>
+                                                )}
+                                                <div className="related-article-content">
+                                                    <h3>{related.title}</h3>
+                                                    <p>{related.description}</p>
+                                                    <div className="related-meta">
+                                                        <span className="time">{formatDate(related.createdAt)}</span>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </article>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
 
                         {/* Back Button */}
-                        <div style={{ marginTop: '3rem', paddingTop: '2rem', borderTop: '1px solid #eee' }}>
-                            <a href="/" style={{ textDecoration: 'none', color: '#007bff', fontWeight: 'bold' }}>&larr; Back to Home</a>
+                        <div className="back-button-container">
+                            <a href="/" className="back-link">&larr; Back to Home</a>
                         </div>
+                        </div>
+
+                    {/* Right Sidebar */}
+                    <aside className="article-sidebar">
+                        {/* Latest Section */}
+                        <div className="sidebar-section">
+                            <h3 className="sidebar-title">LATEST</h3>
+                            <div className="sidebar-articles">
+                                {sidebarLatest.map((latest) => (
+                                    <article key={latest.id} className="sidebar-article">
+                                        <a href={`/${latest.slug}`}>
+                                            <div className="sidebar-article-content">
+                                                <h4>{latest.title}</h4>
+                                                <div className="sidebar-article-meta">
+                                                    <span className="category">{latest.category}</span>
+                                                    <span className="time">{formatDate(latest.createdAt)}</span>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </article>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Trending/Opinion Section */}
+                        <div className="sidebar-section" style={{ marginTop: '1.5rem' }}>
+                            <h3 className="sidebar-title trending-title">TRENDING</h3>
+                            <div className="sidebar-articles">
+                                {opinionArticles.map((opinion) => (
+                                    <article key={opinion.id} className="sidebar-article">
+                                        <a href={`/${opinion.slug}`}>
+                                            <div className="sidebar-article-content">
+                                                <h4>{opinion.title}</h4>
+                                                <div className="sidebar-article-meta">
+                                                    <span className="category">{opinion.category}</span>
+                                                    <span className="time">{formatDate(opinion.createdAt)}</span>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </article>
+                                ))}
+                            </div>
+                        </div>
+                    </aside>
                     </div>
                 </div>
             </main>

@@ -29,7 +29,7 @@
 
 .trending-story-item {
     border-bottom: 1px solid var(--border-gray);
-    padding: 0.75rem 0;
+    padding: 0.6rem 1rem;
 }
 
 .trending-story-item:last-child {
@@ -37,6 +37,7 @@
 }
 
 .trending-image {
+    position: relative;
     margin-bottom: 0.75rem;
 }
 
@@ -80,10 +81,10 @@
 }
 
 .trending-content h4 {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 600;
-    line-height: 1.4;
-    margin: 0 0 0.4rem 0;
+    line-height: 1.3;
+    margin: 0 0 0.35rem 0;
     color: var(--text-primary);
     transition: color 0.3s ease;
 }
@@ -92,7 +93,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 0.65rem;
+    font-size: 0.625rem;
 }
 
 .trending-category {

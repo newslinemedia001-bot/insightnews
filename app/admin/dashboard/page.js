@@ -57,8 +57,11 @@ export default function AdminDashboard() {
             </div>
 
             <div style={{ marginBottom: '2rem' }}>
-                <Link href="/admin/editor" style={{ display: 'inline-block', padding: '0.75rem 1.5rem', background: '#28a745', color: 'white', textDecoration: 'none', borderRadius: '4px' }}>
+                <Link href="/admin/editor" style={{ display: 'inline-block', padding: '0.75rem 1.5rem', background: '#28a745', color: 'white', textDecoration: 'none', borderRadius: '4px', marginRight: '1rem' }}>
                     + Create New Article
+                </Link>
+                <Link href="/admin/rss-feeds" style={{ display: 'inline-block', padding: '0.75rem 1.5rem', background: '#6f42c1', color: 'white', textDecoration: 'none', borderRadius: '4px' }}>
+                    Manage RSS Feeds
                 </Link>
             </div>
 

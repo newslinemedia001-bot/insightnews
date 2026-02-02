@@ -7,7 +7,7 @@
 
 .main-content {
     flex: 1;
-    padding: 1.5rem 0;
+    padding: 0.75rem 0;
     background-color: white;
 }
 
@@ -58,7 +58,8 @@
 .section-title-bar {
     text-align: left;
     padding: 2px 0;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
+    margin-top: 0.5rem;
     border-top: 1px solid #ccc;
     border-bottom: 2px solid #000;
 }
@@ -76,7 +77,7 @@
 
 /* Breaking News Section */
 .breaking-news-section {
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
 }
 
 /* Breaking Hero - Main Story */
@@ -380,7 +381,7 @@
 
 /* Category Sections - Text-focused like Tuko */
 .category-section {
-    margin-bottom: 2.5rem;
+    margin-bottom: 1.5rem;
 }
 
 .category-grid {
@@ -448,7 +449,7 @@
 /* Horizontal Grid for full-width category sections */
 .horizontal-grid {
     display: grid !important;
-    grid-template-columns: repeat(3, 1fr) !important;
+    grid-template-columns: repeat(4, 1fr) !important;
     gap: 1.5rem !important;
     flex-direction: row !important;
     border-top: none !important;
@@ -519,7 +520,7 @@
 
 .image-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 1.5rem;
 }
 
@@ -589,9 +590,9 @@
     min-width: 0;
 }
 
-/* Entertainment Grid - 2 per row optional? Tuko usually does 3 */
+/* Entertainment Grid - 4 per row */
 .entertainment-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
 }
 
 /* Responsive Design */
