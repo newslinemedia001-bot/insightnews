@@ -19,3 +19,27 @@ export default function PrivacyPage() {
                     <li>Device and browser information</li>
                     <li>IP address and location data</li>
                 </ul>
+            </section>
+
+            <section>
+                <h2>2. How We Use Your Information</h2>
+                <p>We use the information we collect to provide, maintain, and improve our services, including to personalize content and communicate with you.</p>
+            </section>
+
+            <section>
+                <h2>3. Information Sharing</h2>
+                <p>We do not sell your personal information. We may share your information with service providers who assist us in operating our website.</p>
+            </section>
+
+            <section>
+                <h2>4. Your Rights</h2>
+                <p>You have the right to access, update, or delete your personal information at any time. Contact us for assistance.</p>
+            </section>
+
+            <section>
+                <h2>5. Contact Us</h2>
+                <p>If you have questions about this Privacy Policy, please contact us at privacy@kenyannewshub.com</p>
+            </section>
+        </div>
+    );
+}
