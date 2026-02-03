@@ -14,16 +14,23 @@ export const revalidate = 60; // Cache for 60 seconds
 export async function generateMetadata({ params }) {
     const { slug } = await params;
     const item = await getItem(slug);
-    
-    if (!item || item.type !== 'article') {
+
+    if (!item) {
         return {
-            title: 'Article Not Found',
-            description: 'The article you are looking for does not exist.'
+            title: 'Not Found',
+            description: 'The content you are looking for does not exist.'
         };
     }
-    
+
+    if (item.type === 'category') {
+        return {
+            title: `${item.name} News | InsightNews`,
+            description: `Latest ${item.name} news, breaking stories, and updates from InsightNews.`
+        };
+    }
+
     const article = item.data;
-    
+
     return {
         title: article.title,
         description: article.description || article.summary || article.title,
@@ -74,10 +81,10 @@ async function getItem(slug) {
     if (!snapshot.empty) {
         const doc = snapshot.docs[0];
         const articleData = { id: doc.id, ...doc.data() };
-        
+
         // Fetch related articles from same category
         const relatedQ = query(
-            collection(db, 'articles'), 
+            collection(db, 'articles'),
             where('category', '==', articleData.category),
             where('slug', '!=', slug),
             orderBy('slug'),
@@ -86,7 +93,7 @@ async function getItem(slug) {
         );
         const relatedSnapshot = await getDocs(relatedQ);
         const relatedArticles = relatedSnapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-        
+
         // Fetch latest articles for "Read Also" links and sidebar
         const latestQ = query(
             collection(db, 'articles'),
@@ -97,7 +104,7 @@ async function getItem(slug) {
         const latestArticles = latestSnapshot.docs
             .map(d => ({ id: d.id, ...d.data() }))
             .filter(a => a.slug !== slug); // Exclude current article
-        
+
         // Fetch opinion articles for sidebar (with error handling)
         let opinionArticles = [];
         try {
@@ -114,9 +121,9 @@ async function getItem(slug) {
             // Fallback to latest articles if Opinion query fails
             opinionArticles = latestArticles.slice(11, 16);
         }
-        
-        return { 
-            type: 'article', 
+
+        return {
+            type: 'article',
             data: articleData,
             relatedArticles,
             latestArticles: latestArticles.slice(0, 6),
@@ -198,15 +205,15 @@ export default async function Page({ params }) {
     const latestArticles = item.latestArticles || [];
     const sidebarLatest = item.sidebarLatest || [];
     const opinionArticles = item.opinionArticles || [];
-    
+
     // Function to inject Read Also links into content
     function injectReadAlsoLinks(content, articles) {
         if (!articles || articles.length === 0) return content;
-        
+
         // Split content into paragraphs
         const paragraphs = content.split('</p>');
         if (paragraphs.length < 4) return content; // Need at least 4 paragraphs
-        
+
         // Calculate positions to insert links (roughly 1/4, 1/2, 3/4 through the article)
         const totalParas = paragraphs.length;
         const positions = [
@@ -214,7 +221,7 @@ export default async function Page({ params }) {
             Math.floor(totalParas * 0.5),
             Math.floor(totalParas * 0.75)
         ];
-        
+
         // Insert Read Also links at calculated positions
         positions.forEach((pos, idx) => {
             if (articles[idx] && pos < paragraphs.length) {
@@ -222,13 +229,13 @@ export default async function Page({ params }) {
                 paragraphs[pos] = paragraphs[pos] + '</p>' + readAlsoLink;
             }
         });
-        
+
         return paragraphs.join('</p>');
     }
-    
+
     // Inject Read Also links into article content
     const contentWithReadAlso = injectReadAlsoLinks(article.content, latestArticles.slice(0, 3));
-    
+
     return (
         <div className="site-wrapper">
             <Header />
@@ -236,76 +243,105 @@ export default async function Page({ params }) {
                 <div className="container">
                     {/* Article with Sidebar Layout */}
                     <div className="article-with-sidebar">
-                    <div className="article-container">
-                        <h1 className="article-title">{article.title}</h1>
-                        
-                        {/* Summary Box */}
-                        {article.summary && (
-                            <div className="article-summary">
-                                <p>{article.summary}</p>
+                        <div className="article-container">
+                            <h1 className="article-title">{article.title}</h1>
+
+                            {/* Summary Box */}
+                            {article.summary && (
+                                <div className="article-summary">
+                                    <p>{article.summary}</p>
+                                </div>
+                            )}
+
+                            <div className="article-meta">
+                                <span className="author">By <strong>{article.author}</strong></span>
+                                <span className="time">{formatDate(article.createdAt)}</span>
+                                <span className="category-badge">{article.category}</span>
                             </div>
-                        )}
-                        
-                        <div className="article-meta">
-                            <span className="author">By <strong>{article.author}</strong></span>
-                            <span className="time">{formatDate(article.createdAt)}</span>
-                            <span className="category-badge">{article.category}</span>
-                        </div>
 
-                        {article.image && (
-                            <div className="article-featured-image">
-                                <img src={article.image} alt={article.title} />
+                            {article.image && (
+                                <div className="article-featured-image">
+                                    <img src={article.image} alt={article.title} />
+                                </div>
+                            )}
+
+                            {/* Article Content with injected Read Also links */}
+                            <div className="article-body">
+                                <div dangerouslySetInnerHTML={{ __html: contentWithReadAlso }} />
                             </div>
-                        )}
 
-                        {/* Article Content with injected Read Also links */}
-                        <div className="article-body">
-                            <div dangerouslySetInnerHTML={{ __html: contentWithReadAlso }} />
-                        </div>
+                            {/* Read Also Box at the end */}
+                            {latestArticles.length > 3 && (
+                                <div className="read-also-box-end">
+                                    <h3>Read Also</h3>
+                                    <ul>
+                                        {latestArticles.slice(3, 6).map(a => (
+                                            <li key={a.id}>
+                                                <a href={`/${a.slug}`}>{a.title}</a>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
 
-                        {/* Read Also Box at the end */}
-                        {latestArticles.length > 3 && (
-                            <div className="read-also-box-end">
-                                <h3>Read Also</h3>
-                                <ul>
-                                    {latestArticles.slice(3, 6).map(a => (
-                                        <li key={a.id}>
-                                            <a href={`/${a.slug}`}>{a.title}</a>
-                                        </li>
+                            {/* Tags Section */}
+                            {article.tags && article.tags.length > 0 && (
+                                <div className="article-tags">
+                                    <strong>Tags:</strong>
+                                    {article.tags.map(tag => (
+                                        <span key={tag} className="tag-item">{tag}</span>
                                     ))}
-                                </ul>
-                            </div>
-                        )}
+                                </div>
+                            )}
 
-                        {/* Tags Section */}
-                        {article.tags && article.tags.length > 0 && (
-                            <div className="article-tags">
-                                <strong>Tags:</strong>
-                                {article.tags.map(tag => (
-                                    <span key={tag} className="tag-item">{tag}</span>
-                                ))}
-                            </div>
-                        )}
-
-                        {/* Related Articles Section */}
-                        {relatedArticles.length > 0 && (
-                            <div className="related-articles-section">
-                                <h2>RELATED ARTICLES</h2>
-                                <div className="related-articles-grid">
-                                    {relatedArticles.map(related => (
-                                        <article key={related.id} className="related-article-card">
-                                            <a href={`/${related.slug}`}>
-                                                {related.image && (
-                                                    <div className="related-article-image">
-                                                        <img src={related.image} alt={related.title} />
-                                                        <span className="related-category-badge">{related.category}</span>
+                            {/* Related Articles Section */}
+                            {relatedArticles.length > 0 && (
+                                <div className="related-articles-section">
+                                    <h2>RELATED ARTICLES</h2>
+                                    <div className="related-articles-grid">
+                                        {relatedArticles.map(related => (
+                                            <article key={related.id} className="related-article-card">
+                                                <a href={`/${related.slug}`}>
+                                                    {related.image && (
+                                                        <div className="related-article-image">
+                                                            <img src={related.image} alt={related.title} />
+                                                            <span className="related-category-badge">{related.category}</span>
+                                                        </div>
+                                                    )}
+                                                    <div className="related-article-content">
+                                                        <h3>{related.title}</h3>
+                                                        <p>{related.description}</p>
+                                                        <div className="related-meta">
+                                                            <span className="time">{formatDate(related.createdAt)}</span>
+                                                        </div>
                                                     </div>
-                                                )}
-                                                <div className="related-article-content">
-                                                    <h3>{related.title}</h3>
-                                                    <p>{related.description}</p>
-                                                    <div className="related-meta">
-                                                        <span className="time">{formatDate(related.createdAt)}</span>
+                                                </a>
+                                            </article>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Back Button */}
+                            <div className="back-button-container">
+                                <a href="/" className="back-link">&larr; Back to Home</a>
+                            </div>
+                        </div>
+
+                        {/* Right Sidebar */}
+                        <aside className="article-sidebar">
+                            {/* Latest Section */}
+                            <div className="sidebar-section">
+                                <h3 className="sidebar-title">LATEST</h3>
+                                <div className="sidebar-articles">
+                                    {sidebarLatest.map((latest) => (
+                                        <article key={latest.id} className="sidebar-article">
+                                            <a href={`/${latest.slug}`}>
+                                                <div className="sidebar-article-content">
+                                                    <h4>{latest.title}</h4>
+                                                    <div className="sidebar-article-meta">
+                                                        <span className="category">{latest.category}</span>
+                                                        <span className="time">{formatDate(latest.createdAt)}</span>
                                                     </div>
                                                 </div>
                                             </a>
@@ -313,56 +349,27 @@ export default async function Page({ params }) {
                                     ))}
                                 </div>
                             </div>
-                        )}
 
-                        {/* Back Button */}
-                        <div className="back-button-container">
-                            <a href="/" className="back-link">&larr; Back to Home</a>
-                        </div>
-                        </div>
-
-                    {/* Right Sidebar */}
-                    <aside className="article-sidebar">
-                        {/* Latest Section */}
-                        <div className="sidebar-section">
-                            <h3 className="sidebar-title">LATEST</h3>
-                            <div className="sidebar-articles">
-                                {sidebarLatest.map((latest) => (
-                                    <article key={latest.id} className="sidebar-article">
-                                        <a href={`/${latest.slug}`}>
-                                            <div className="sidebar-article-content">
-                                                <h4>{latest.title}</h4>
-                                                <div className="sidebar-article-meta">
-                                                    <span className="category">{latest.category}</span>
-                                                    <span className="time">{formatDate(latest.createdAt)}</span>
+                            {/* Trending/Opinion Section */}
+                            <div className="sidebar-section" style={{ marginTop: '1.5rem' }}>
+                                <h3 className="sidebar-title trending-title">TRENDING</h3>
+                                <div className="sidebar-articles">
+                                    {opinionArticles.map((opinion) => (
+                                        <article key={opinion.id} className="sidebar-article">
+                                            <a href={`/${opinion.slug}`}>
+                                                <div className="sidebar-article-content">
+                                                    <h4>{opinion.title}</h4>
+                                                    <div className="sidebar-article-meta">
+                                                        <span className="category">{opinion.category}</span>
+                                                        <span className="time">{formatDate(opinion.createdAt)}</span>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </a>
-                                    </article>
-                                ))}
+                                            </a>
+                                        </article>
+                                    ))}
+                                </div>
                             </div>
-                        </div>
-
-                        {/* Trending/Opinion Section */}
-                        <div className="sidebar-section" style={{ marginTop: '1.5rem' }}>
-                            <h3 className="sidebar-title trending-title">TRENDING</h3>
-                            <div className="sidebar-articles">
-                                {opinionArticles.map((opinion) => (
-                                    <article key={opinion.id} className="sidebar-article">
-                                        <a href={`/${opinion.slug}`}>
-                                            <div className="sidebar-article-content">
-                                                <h4>{opinion.title}</h4>
-                                                <div className="sidebar-article-meta">
-                                                    <span className="category">{opinion.category}</span>
-                                                    <span className="time">{formatDate(opinion.createdAt)}</span>
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </article>
-                                ))}
-                            </div>
-                        </div>
-                    </aside>
+                        </aside>
                     </div>
                 </div>
             </main>

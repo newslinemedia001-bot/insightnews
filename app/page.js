@@ -70,7 +70,7 @@ export default async function Home() {
 
   // For the center grid (Text Only), we want articles that are NOT the main hero
   // We filter out the main hero ID to avoid duplication
-  const textGridStories = latestNews.filter(a => a.id !== mainHero?.id).slice(0, 10);
+  const textGridStories = latestNews.filter(a => a.id !== mainHero?.id).slice(0, 5);
 
   // Review story (second hero feature) - typically the second latest
   const reviewStory = textGridStories[0]; // Logic can be improved, but this works for now

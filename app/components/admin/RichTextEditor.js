@@ -16,6 +16,9 @@ export default function RichTextEditor({ value, onChange }) {
             [{ 'align': [] }],
             ['clean']
         ],
+        clipboard: {
+            matchVisual: false
+        }
     };
 
     return (

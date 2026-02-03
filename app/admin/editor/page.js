@@ -26,6 +26,7 @@ function ArticleEditorContent() {
         focusKeyword: '',
         isBreaking: false
     });
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -76,19 +77,25 @@ function ArticleEditorContent() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (isSubmitting) return;
+
+        setIsSubmitting(true);
         try {
             const dataToSave = { ...formData, updatedAt: serverTimestamp() };
             if (articleId) {
                 await updateDoc(doc(db, 'articles', articleId), dataToSave);
+                alert("Article updated successfully!");
             } else {
                 dataToSave.createdAt = serverTimestamp();
                 dataToSave.views = 0;
                 await addDoc(collection(db, 'articles'), dataToSave);
+                alert("Article published successfully!");
             }
             router.push('/admin/dashboard');
         } catch (error) {
             console.error("Error saving article:", error);
             alert("Error saving article");
+            setIsSubmitting(false);
         }
     };
 
@@ -208,8 +215,22 @@ function ArticleEditorContent() {
                             <label htmlFor="isBreaking" style={{ fontWeight: '500', color: '#374151', cursor: 'pointer' }}>Set as Main Breaking News</label>
                         </div>
 
-                        <button type="submit" style={{ padding: '0.875rem 2.5rem', background: '#2563eb', color: 'white', border: 'none', borderRadius: '8px', fontSize: '1rem', fontWeight: '600', cursor: 'pointer', boxShadow: '0 2px 4px rgba(37, 99, 235, 0.2)' }}>
-                            {articleId ? 'Update' : 'Publish'}
+                        <button
+                            type="submit"
+                            disabled={isSubmitting}
+                            style={{
+                                padding: '0.875rem 2.5rem',
+                                background: isSubmitting ? '#93c5fd' : '#2563eb',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '8px',
+                                fontSize: '1rem',
+                                fontWeight: '600',
+                                cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                                boxShadow: '0 2px 4px rgba(37, 99, 235, 0.2)'
+                            }}
+                        >
+                            {isSubmitting ? (articleId ? 'Updating...' : 'Publishing...') : (articleId ? 'Update' : 'Publish')}
                         </button>
                     </div>
 

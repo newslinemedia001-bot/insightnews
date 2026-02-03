@@ -13,8 +13,8 @@ function formatDate(timestamp) {
 
 export default function RightSidebar({ articles = [] }) {
     // Increase to 23 articles to match other columns (15 + 8 = 23)
-    const displayArticles = articles.slice(0, 12);
-    
+    const displayArticles = articles.slice(0, 8);
+
     return (
         <div className="right-sidebar-container">
             <div className="trending-header">

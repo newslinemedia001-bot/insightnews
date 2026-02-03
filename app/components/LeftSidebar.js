@@ -14,8 +14,8 @@ function formatDate(timestamp) {
 
 export default function LeftSidebar({ articles = [] }) {
     // Reduce articles to match middle column height
-    const displayArticles = articles.slice(0, 9);
-    
+    const displayArticles = articles.slice(0, 5);
+
     return (
         <div className="left-sidebar-container">
             <div className="latest-header">
