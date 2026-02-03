@@ -39,7 +39,7 @@ export async function generateMetadata({ params }) {
         openGraph: {
             title: article.title,
             description: article.description || article.summary,
-            images: article.image ? [article.image] : [],
+            images: article.image || article.featuredImage ? [article.image || article.featuredImage] : [],
             type: 'article',
             publishedTime: article.createdAt ? new Date(article.createdAt.seconds * 1000).toISOString() : undefined,
         },
@@ -47,7 +47,7 @@ export async function generateMetadata({ params }) {
             card: 'summary_large_image',
             title: article.title,
             description: article.description || article.summary,
-            images: article.image ? [article.image] : [],
+            images: article.image || article.featuredImage ? [article.image || article.featuredImage] : [],
         },
         robots: {
             index: true,
@@ -175,8 +175,8 @@ export default async function Page({ params }) {
                                 {item.data.length === 0 && <p>No articles in this category yet.</p>}
                                 {item.data.map(story => (
                                     <article key={story.id} className="news-item" style={{ display: 'flex', gap: '1.5rem', marginBottom: '1.5rem', alignItems: 'flex-start', background: 'white', padding: '1rem', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-                                        {story.image && (
-                                            <img src={story.image} alt={story.title} style={{ width: '250px', height: '160px', objectFit: 'cover', borderRadius: '4px', flexShrink: 0 }} />
+                                        {(story.image || story.featuredImage) && (
+                                            <img src={story.image || story.featuredImage} alt={story.title} style={{ width: '250px', height: '160px', objectFit: 'cover', borderRadius: '4px', flexShrink: 0 }} />
                                         )}
                                         <div className="news-item-content" style={{ flex: 1 }}>
                                             <a href={`/${story.slug}`} style={{ color: 'inherit', textDecoration: 'none' }}>
@@ -259,9 +259,9 @@ export default async function Page({ params }) {
                                 <span className="category-badge">{article.category}</span>
                             </div>
 
-                            {article.image && (
+                            {(article.image || article.featuredImage) && (
                                 <div className="article-featured-image">
-                                    <img src={article.image} alt={article.title} />
+                                    <img src={article.image || article.featuredImage} alt={article.title} />
                                 </div>
                             )}
 
@@ -302,9 +302,9 @@ export default async function Page({ params }) {
                                         {relatedArticles.map(related => (
                                             <article key={related.id} className="related-article-card">
                                                 <a href={`/${related.slug}`}>
-                                                    {related.image && (
+                                                    {(related.image || related.featuredImage) && (
                                                         <div className="related-article-image">
-                                                            <img src={related.image} alt={related.title} />
+                                                            <img src={related.image || related.featuredImage} alt={related.title} />
                                                             <span className="related-category-badge">{related.category}</span>
                                                         </div>
                                                     )}

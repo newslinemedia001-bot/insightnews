@@ -97,7 +97,7 @@ export default async function Home() {
                 <a href={`/${mainHero.slug}`} style={{ color: 'inherit', textDecoration: 'none', display: 'block' }}>
                   <div className="breaking-hero">
                     <div className="breaking-hero-image">
-                      <img src={mainHero.image || "/images/placeholder.png"} alt={mainHero.title} />
+                      <img src={mainHero.image || mainHero.featuredImage || "/images/placeholder.png"} alt={mainHero.title} />
                     </div>
                     <div className="breaking-hero-text">
                       <span className="breaking-badge">BREAKING</span>
@@ -129,7 +129,7 @@ export default async function Home() {
                 {reviewStory && (
                   <a href={`/${reviewStory.slug}`} style={{ color: 'inherit', textDecoration: 'none', display: 'block' }}>
                     <div className="newspaper-reviews-section">
-                      <img src={reviewStory.image || "/images/placeholder.png"} alt={reviewStory.title} />
+                      <img src={reviewStory.image || reviewStory.featuredImage || "/images/placeholder.png"} alt={reviewStory.title} />
                       <div className="review-content">
                         <h4>{reviewStory.title}</h4>
                         <p className="review-excerpt">{reviewStory.description}</p>
@@ -148,7 +148,7 @@ export default async function Home() {
                   {remainingGrid.map(story => (
                     <article key={story.id} className="news-item">
                       <a href={`/${story.slug}`} style={{ color: 'inherit', textDecoration: 'none', display: 'contents' }}>
-                        <img src={story.image || "/images/placeholder.png"} alt={story.title} />
+                        <img src={story.image || story.featuredImage || "/images/placeholder.png"} alt={story.title} />
                         <div className="news-item-content">
                           <div className="news-meta">
                             <span className="category">{story.category}</span>
@@ -178,7 +178,7 @@ export default async function Home() {
                     <a href={`/${story.slug}`} style={{ color: 'inherit', textDecoration: 'none', display: 'block' }}>
                       <div className="article-image-wrapper">
                         <div className="corner-ribbon"></div>
-                        <img src={story.image || "/images/placeholder.png"} alt={story.title} />
+                        <img src={story.image || story.featuredImage || "/images/placeholder.png"} alt={story.title} />
                       </div>
                       {i === 0 && <span className="exclusive-badge">EXCLUSIVE</span>}
                       <h4>{story.title}</h4>
@@ -205,7 +205,7 @@ export default async function Home() {
                     <a href={`/${story.slug}`} style={{ color: 'inherit', textDecoration: 'none', display: 'block' }}>
                       <div className="article-image-wrapper">
                         <div className="corner-ribbon"></div>
-                        <img src={story.image || "/images/placeholder.png"} alt={story.title} />
+                        <img src={story.image || story.featuredImage || "/images/placeholder.png"} alt={story.title} />
                       </div>
                       <h4>{story.title}</h4>
                       <div className="article-meta">
@@ -230,7 +230,7 @@ export default async function Home() {
                     <a href={`/${story.slug}`} style={{ color: 'inherit', textDecoration: 'none', display: 'block' }}>
                       <div className="article-image-wrapper">
                         <div className="corner-ribbon"></div>
-                        <img src={story.image || "/images/placeholder.png"} alt={story.title} />
+                        <img src={story.image || story.featuredImage || "/images/placeholder.png"} alt={story.title} />
                       </div>
                       <h4>{story.title}</h4>
                       <div className="article-meta">
@@ -255,7 +255,7 @@ export default async function Home() {
                     <a href={`/${story.slug}`} style={{ color: 'inherit', textDecoration: 'none', display: 'block' }}>
                       <div className="article-image-wrapper">
                         <div className="corner-ribbon"></div>
-                        <img src={story.image || "/images/placeholder.png"} alt={story.title} />
+                        <img src={story.image || story.featuredImage || "/images/placeholder.png"} alt={story.title} />
                       </div>
                       <h4>{story.title}</h4>
                       <div className="article-meta">
@@ -279,7 +279,7 @@ export default async function Home() {
                     <a href={`/${story.slug}`} style={{ color: 'inherit', textDecoration: 'none', display: 'block' }}>
                       <div className="article-image-wrapper">
                         <div className="corner-ribbon"></div>
-                        <img src={story.image || "/images/placeholder.png"} alt={story.title} />
+                        <img src={story.image || story.featuredImage || "/images/placeholder.png"} alt={story.title} />
                       </div>
                       <h4>{story.title}</h4>
                       <div className="article-meta">
@@ -304,7 +304,7 @@ export default async function Home() {
                     <a href={`/${story.slug}`} style={{ color: 'inherit', textDecoration: 'none', display: 'block' }}>
                       <div className="article-image-wrapper">
                         <div className="corner-ribbon"></div>
-                        <img src={story.image || "/images/placeholder.png"} alt={story.title} />
+                        <img src={story.image || story.featuredImage || "/images/placeholder.png"} alt={story.title} />
                       </div>
                       <h4>{story.title}</h4>
                       <div className="article-meta">

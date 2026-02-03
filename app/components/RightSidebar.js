@@ -25,9 +25,9 @@ export default function RightSidebar({ articles = [] }) {
                 {displayArticles.map((story, index) => (
                     <li key={story.id || index} className="trending-story-item">
                         <a href={`/${story.slug}`}>
-                            {index === 0 && story.image && (
+                            {index === 0 && (story.image || story.featuredImage) && (
                                 <div className="trending-image">
-                                    <img src={story.image} alt={story.title} />
+                                    <img src={story.image || story.featuredImage} alt={story.title} />
                                 </div>
                             )}
                             <div className="trending-content">
