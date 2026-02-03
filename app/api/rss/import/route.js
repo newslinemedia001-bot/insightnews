@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { importRssFeed } from '@/lib/rss';
-import { db } from '@/lib/firebase';
+import { db, auth } from '@/lib/firebase';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { signInAnonymously } from 'firebase/auth';
 
 export const maxDuration = 60; // Set max duration for serverless function (optional, varies by platform)
 
@@ -20,6 +21,16 @@ export async function POST(request) {
 
         if (!isAuthenticated) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        // 1.5. Firebase Auth (Satisfy Firestore Rules)
+        // Your rules require 'request.auth != null' for writes.
+        // We sign in anonymously to get a valid auth token for this server-side session.
+        try {
+            await signInAnonymously(auth);
+        } catch (authError) {
+            console.error("RSS Auth Error: Could not sign in anonymously. Ensure 'Anonymous' provider is enabled in Firebase Console.", authError);
+            // We continue anyway, in case rules have changed, but it will likely fail.
         }
 
         // 2. Parse Body (for manual mode)
