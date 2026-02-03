@@ -3,6 +3,9 @@
     background-color: white;
     border: 1px solid var(--border-gray);
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .trending-header {
@@ -10,6 +13,7 @@
     padding: 8px 12px;
     margin-bottom: 0;
     text-align: left;
+    flex-shrink: 0;
 }
 
 .trending-header h3 {
@@ -25,6 +29,8 @@
     list-style: none;
     padding: 0 1rem;
     margin: 0;
+    overflow-y: auto;
+    flex: 1;
 }
 
 .trending-story-item {

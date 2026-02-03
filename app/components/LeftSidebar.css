@@ -2,12 +2,17 @@
 .left-sidebar-container {
     background-color: white;
     border: 1px solid var(--border-gray);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .latest-stories-list {
     list-style: none;
     padding: 0 1rem 1rem 1rem;
     margin: 0;
+    overflow-y: auto;
+    flex: 1;
 }
 
 .latest-header {

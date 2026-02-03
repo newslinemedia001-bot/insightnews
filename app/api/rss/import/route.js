@@ -51,10 +51,10 @@ export async function POST(request) {
             const rotationRef = doc(db, 'settings', 'rssRotation');
             const rotationSnap = await getDoc(rotationRef);
 
-            const rotationData = rotationSnap.exists() ? rotationSnap.data() : { lastCategory: null, allCategories: ['news', 'technology', 'business', 'lifestyle', 'entertainment', 'sports', 'politics', 'health'] };
+            const rotationData = rotationSnap.exists() ? rotationSnap.data() : { lastCategory: null, allCategories: ['news', 'politics', 'world', 'business', 'entertainment', 'sports', 'lifestyle', 'opinion'] };
 
             // Determine next category
-            const allCats = rotationData.allCategories || ['news', 'technology', 'business'];
+            const allCats = rotationData.allCategories || ['news', 'politics', 'world', 'business', 'entertainment', 'sports', 'lifestyle', 'opinion'];
             const lastCat = rotationData.lastCategory;
 
             let nextIndex = 0;

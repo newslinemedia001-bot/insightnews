@@ -20,7 +20,7 @@ function ArticleEditorContent() {
         slug: '',
         description: '',
         content: '',
-        category: 'Politics',
+        category: 'News',
         image: '',
         author: '',
         focusKeyword: '',
@@ -167,18 +167,14 @@ function ArticleEditorContent() {
                                     onChange={handleChange}
                                     style={{ width: '100%', padding: '0.75rem', border: '1px solid #d1d5db', borderRadius: '6px', appearance: 'none', background: 'white', fontSize: '1rem' }}
                                 >
+                                    <option value="News">News</option>
                                     <option value="Politics">Politics</option>
+                                    <option value="World">World</option>
                                     <option value="Business">Business</option>
                                     <option value="Entertainment">Entertainment</option>
-                                    <option value="People">People</option>
-                                    <option value="Family">Family</option>
-                                    <option value="Crime">Crime</option>
                                     <option value="Sports">Sports</option>
                                     <option value="Lifestyle">Lifestyle</option>
-                                    <option value="Technology">Technology</option>
                                     <option value="Opinion">Opinion</option>
-                                    <option value="World">World</option>
-                                    <option value="Kenya">Kenya</option>
                                 </select>
                             </div>
                         </div>

@@ -12,8 +12,8 @@ function formatDate(timestamp) {
 }
 
 export default function RightSidebar({ articles = [] }) {
-    // Increase to 23 articles to match other columns (15 + 8 = 23)
-    const displayArticles = articles.slice(0, 8);
+    // Increase to 9 articles to fill the space
+    const displayArticles = articles.slice(0, 9);
 
     return (
         <div className="right-sidebar-container">

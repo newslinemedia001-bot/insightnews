@@ -15,11 +15,11 @@ export default function RssFeedsAdmin() {
     const [formData, setFormData] = useState({
         name: '',
         url: '',
-        category: 'technology',
+        category: 'news',
         enabled: true
     });
 
-    const CATEGORIES = ['news', 'technology', 'business', 'lifestyle', 'entertainment', 'sports', 'politics', 'health'];
+    const CATEGORIES = ['news', 'politics', 'world', 'business', 'entertainment', 'sports', 'lifestyle', 'opinion'];
 
     useEffect(() => {
         fetchFeeds();
@@ -97,7 +97,7 @@ export default function RssFeedsAdmin() {
     };
 
     const resetForm = () => {
-        setFormData({ name: '', url: '', category: 'technology', enabled: true });
+        setFormData({ name: '', url: '', category: 'news', enabled: true });
         setIsAdding(false);
         setEditingId(null);
     };
@@ -109,15 +109,17 @@ export default function RssFeedsAdmin() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': process.env.NEXT_PUBLIC_RSS_API_KEY || '8fcb0cec763622059af59b1b541af454ff06059e9195aaf0e5616633b4e1fd27'
                 },
                 body: JSON.stringify({ category })
             });
 
             if (response.ok) {
                 const result = await response.json();
-                setImportStatus(`Success! Imported: ${result.stats.imported}, Duplicates: ${result.stats.duplicates}`);
+                setImportStatus(`Success! Imported: ${result.stats.imported}, Duplicates: ${result.stats.duplicates}, Skipped: ${result.stats.skipped}`);
             } else {
-                setImportStatus(`Failed. Status: ${response.status}`);
+                const errorData = await response.json().catch(() => ({}));
+                setImportStatus(`Failed. Status: ${response.status} - ${errorData.error || 'Unknown error'}`);
             }
 
         } catch (error) {
@@ -222,6 +224,38 @@ export default function RssFeedsAdmin() {
                     <strong>Status:</strong> {importStatus}
                 </div>
             )}
+
+            {/* Manual Import by Category */}
+            <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)', marginBottom: '2rem' }}>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem' }}>Manual Import by Category</h3>
+                <p style={{ color: '#666', marginBottom: '1rem', fontSize: '0.95rem' }}>
+                    <strong>Auto Rotation Order:</strong> News → Politics → World → Business → Entertainment → Sports → Lifestyle → Opinion (repeats)
+                </p>
+                <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                    {CATEGORIES.map(cat => (
+                        <button
+                            key={cat}
+                            onClick={() => handleManualImport(cat)}
+                            style={{
+                                padding: '0.75rem 1.5rem',
+                                backgroundColor: '#007bff',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '6px',
+                                cursor: 'pointer',
+                                fontSize: '0.95rem',
+                                fontWeight: '500',
+                                textTransform: 'capitalize',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.5rem'
+                            }}
+                        >
+                            <Play size={16} /> {cat}
+                        </button>
+                    ))}
+                </div>
+            </div>
 
             {isAdding && (
                 <div style={formStyle}>
