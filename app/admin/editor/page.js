@@ -130,14 +130,6 @@ function ArticleEditorContent() {
                         />
                     </div>
 
-                    {/* Main Content Editor */}
-                    <div style={{ background: 'white', padding: '2rem', borderRadius: '12px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)' }}>
-                        <label style={{ display: 'block', fontWeight: '600', marginBottom: '1rem', color: '#374151', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <FileText size={18} /> Content
-                        </label>
-                        <RichTextEditor value={formData.content} onChange={handleContentChange} />
-                    </div>
-
                     {/* Excerpt */}
                     <div style={{ background: 'white', padding: '2rem', borderRadius: '12px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)' }}>
                         <label style={{ display: 'block', fontWeight: '600', marginBottom: '0.75rem', color: '#374151' }}>Short Description (Excerpt)</label>
@@ -150,6 +142,16 @@ function ArticleEditorContent() {
                             style={{ width: '100%', padding: '0.75rem', border: '1px solid #d1d5db', borderRadius: '8px', fontSize: '0.95rem' }}
                         />
                     </div>
+
+                    {/* Main Content Editor */}
+                    <div style={{ background: 'white', padding: '2rem', borderRadius: '12px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)' }}>
+                        <label style={{ display: 'block', fontWeight: '600', marginBottom: '1rem', color: '#374151', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <FileText size={18} /> Content
+                        </label>
+                        <RichTextEditor value={formData.content} onChange={handleContentChange} />
+                    </div>
+
+
 
                     {/* Mobile-style Layout for bottom elements */}
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
