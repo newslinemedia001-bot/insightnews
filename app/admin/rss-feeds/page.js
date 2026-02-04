@@ -116,7 +116,7 @@ export default function RssFeedsAdmin() {
 
             if (response.ok) {
                 const result = await response.json();
-                setImportStatus(`Success! Imported: ${result.stats.imported}, Duplicates: ${result.stats.duplicates}, Skipped: ${result.stats.skipped}`);
+                setImportStatus(`Success! Imported: ${result.stats.imported}, Duplicates: ${result.stats.duplicates}, Skipped: ${result.stats.skipped} (Political: ${result.stats.skippedReasons?.political || 0}, Too Short: ${result.stats.skippedReasons?.tooShort || 0}, No Image: ${result.stats.skippedReasons?.noImage || 0})`);
             } else {
                 const errorData = await response.json().catch(() => ({}));
                 setImportStatus(`Failed. Status: ${response.status} - ${errorData.error || 'Unknown error'}`);
