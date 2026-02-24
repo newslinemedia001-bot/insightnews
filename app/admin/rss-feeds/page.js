@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, orderBy } from 'firebase/firestore';
 import { DEFAULT_FEEDS } from '@/lib/rss';
-import { Trash2, Edit2, Play, Plus, Save, X } from 'lucide-react';
+import { Trash2, Edit2, Play, Plus, Save, X, Zap } from 'lucide-react';
 
 export default function RssFeedsAdmin() {
     const [feeds, setFeeds] = useState([]);
@@ -127,6 +127,43 @@ export default function RssFeedsAdmin() {
         }
     };
 
+    const handleAiGeneration = async (selectedCategory = 'Technology') => {
+        setImportStatus(`Starting AI Content Generation for ${selectedCategory}...`);
+        try {
+            const response = await fetch('/api/rss/import', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-api-key': process.env.NEXT_PUBLIC_RSS_API_KEY || '8fcb0cec763622059af59b1b541af454ff06059e9195aaf0e5616633b4e1fd27'
+                },
+                body: JSON.stringify({ action: 'ai_only', category: selectedCategory })
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                if (result.success) {
+                    // Check if 'result.result' exists (it's nested based on our API logic)
+                    const title = result.result?.title || 'Unknown Title';
+                    const msg = result.result?.message || 'Done';
+
+                    if (result.result?.success === false) {
+                        setImportStatus(`AI Logic Ran: ${msg}`);
+                    } else {
+                        setImportStatus(`Success! AI Generated Article: "${title}"`);
+                    }
+                } else {
+                    setImportStatus(`AI Generation Failed: ${result.error}`);
+                }
+            } else {
+                const errorData = await response.json();
+                setImportStatus(`Failed. ${errorData.error}`);
+            }
+
+        } catch (error) {
+            setImportStatus(`Error: ${error.message}`);
+        }
+    };
+
     // Styles
     const containerStyle = {
         padding: '2rem',
@@ -228,6 +265,46 @@ export default function RssFeedsAdmin() {
             {/* Manual Import by Category */}
             <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)', marginBottom: '2rem' }}>
                 <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem' }}>Manual Import by Category</h3>
+                <div style={{ marginBottom: '1.5rem', padding: '1rem', backgroundColor: '#f3f0ff', borderRadius: '6px', border: '1px solid #d0bfff', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div>
+                        <strong style={{ color: '#6f42c1', display: 'block', marginBottom: '0.25rem' }}>AI Content Receiver</strong>
+                        <span style={{ fontSize: '0.9rem', color: '#555' }}>Generate a unique article using AI immediately.</span>
+                    </div>
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <select
+                            id="aiCategory"
+                            style={{ padding: '0.6rem', borderRadius: '4px', border: '1px solid #ccc' }}
+                            defaultValue="Technology"
+                        >
+                            <option value="Technology">Technology</option>
+                            <option value="Business">Business</option>
+                            <option value="World">World</option>
+                            <option value="News">News</option>
+                        </select>
+                        <button
+                            onClick={() => {
+                                const cat = document.getElementById('aiCategory').value;
+                                handleAiGeneration(cat);
+                            }}
+                            style={{
+                                padding: '0.6rem 1.2rem',
+                                backgroundColor: '#6f42c1',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '6px',
+                                cursor: 'pointer',
+                                fontSize: '0.95rem',
+                                fontWeight: '600',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.5rem',
+                                boxShadow: '0 2px 4px rgba(111, 66, 193, 0.3)'
+                            }}
+                        >
+                            <Zap size={18} /> Generate AI Article
+                        </button>
+                    </div>
+                </div>
                 <p style={{ color: '#666', marginBottom: '1rem', fontSize: '0.95rem' }}>
                     <strong>Auto Rotation Order:</strong> News → Politics → World → Business → Entertainment → Sports → Lifestyle → Opinion (repeats)
                 </p>

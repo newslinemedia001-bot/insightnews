@@ -636,44 +636,195 @@
 }
 
 @media (max-width: 768px) {
-    .three-column-layout {
-        grid-template-columns: 1fr;
+    .main-content {
+        padding: 0.5rem 0;
     }
 
+    .container {
+        padding: 0 10px;
+    }
+
+    /* Mobile: Single column, hide sidebars initially, show breaking + center content */
+    .three-column-layout {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .breaking-news-header-span {
+        order: 1;
+        margin-bottom: 0.75rem;
+    }
+
+    .breaking-hero-span {
+        order: 2;
+        margin-bottom: 1rem;
+    }
+
+    /* Hide left sidebar on mobile */
+    .left-sidebar {
+        display: none;
+    }
+
+    /* Show right sidebar on mobile but reposition it */
+    .right-sidebar {
+        order: 4;
+        display: block;
+    }
+
+    .center-content {
+        order: 3;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Breaking Hero - Mobile optimized */
     .breaking-hero {
         flex-direction: column;
-        padding: 0.75rem;
+        padding: 0;
+        gap: 0;
     }
 
     .breaking-hero-image {
         width: 100%;
+        margin-bottom: 0.75rem;
     }
 
     .breaking-hero-image img {
-        height: 150px;
+        height: 200px;
+        width: 100%;
     }
 
+    .breaking-hero-text {
+        padding: 0.75rem;
+        padding-right: 50px;
+    }
+
+    .breaking-hero-text h3 {
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .breaking-hero-text p {
+        font-size: 0.8rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    /* Newspaper Reviews - Mobile */
     .newspaper-reviews-section {
         flex-direction: column;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
     }
 
     .newspaper-reviews-section img {
         width: 100%;
+        height: auto;
     }
 
-    .news-item,
-    .category-article {
+    .review-content h4 {
+        font-size: 1rem;
+        margin: 0.5rem 0;
+    }
+
+    .review-excerpt {
+        font-size: 0.8rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    /* News Grid - Mobile optimized like Tuko */
+    .news-grid {
+        gap: 0;
+        border-top: 1px solid var(--border-gray);
+    }
+
+    .news-item {
+        gap: 0.75rem;
+        padding: 0.75rem 0;
+    }
+
+    .news-item img {
+        width: 90px;
+        height: 70px;
+    }
+
+    .news-item-content h4 {
+        font-size: 0.9rem;
+        line-height: 1.3;
+    }
+
+    .news-meta {
+        font-size: 0.65rem;
         gap: 0.5rem;
     }
 
-    .news-item img,
-    .category-article img {
-        width: 60px;
-        height: 45px;
+    /* Section Headers - Mobile */
+    .section-title-bar h2 {
+        font-size: 0.75rem;
+        padding: 2px 6px;
     }
 
+    .green-line-header h2 {
+        font-size: 0.8rem;
+        padding: 0 12px;
+    }
+
+    /* Full Width Sections - Mobile */
+    .full-width-sections {
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+    }
+
+    .most-shared-section {
+        padding: 1.5rem 0.75rem;
+        margin: 1.5rem -10px;
+    }
+
+    .category-image-grid-section {
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    /* Image Grids - Single column on mobile */
     .image-grid,
-    .horizontal-grid {
+    .horizontal-grid,
+    .entertainment-grid {
         grid-template-columns: 1fr !important;
+        gap: 1.25rem !important;
+    }
+
+    .image-article h4 {
+        font-size: 0.95rem;
+        line-height: 1.3;
+    }
+
+    .article-image-wrapper img {
+        aspect-ratio: 16/9;
+    }
+
+    /* Category Articles - Mobile */
+    .category-article {
+        gap: 0.75rem;
+        padding: 0.75rem 0;
+    }
+
+    .category-article img {
+        width: 90px;
+        height: 70px;
+    }
+
+    .category-article h4 {
+        font-size: 0.9rem;
+    }
+
+    .article-meta {
+        font-size: 0.65rem;
+        gap: 0.5rem;
     }
 }

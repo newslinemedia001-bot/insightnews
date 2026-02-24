@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { importRssFeed } from '@/lib/rss';
+import { generateFromAllSources } from '@/lib/ai-content';
 import { db, auth } from '@/lib/firebase';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { signInAnonymously } from 'firebase/auth';
@@ -41,6 +42,23 @@ export async function POST(request) {
             // Body might be empty
         }
 
+        // 1.8 Check for AI Only trigger
+        if (body.action === 'ai_only') {
+            console.log("Triggering Manual AI Generation (AI Only Mode)...");
+            try {
+                // Pass the requested category if available
+                const aiResult = await generateFromAllSources(body.category);
+                return NextResponse.json({
+                    success: true,
+                    mode: 'ai_only',
+                    result: aiResult
+                });
+            } catch (error) {
+                console.error("Manual AI Generation Failed:", error);
+                return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+            }
+        }
+
         const manualCategory = body.category || null;
 
         // 3. Rotation Logic (if no manual category)
@@ -75,7 +93,20 @@ export async function POST(request) {
             }, { merge: true });
         }
 
-        // 4. Run Import
+        // 4. Run AI Generation (One article per trigger)
+        // We do this BEFORE the main import to ensure we satisfy the request quickly, 
+        // and prevent the original RSS feed for this item from being imported (duplicate check).
+        console.log("Triggering AI Content Generation...");
+        try {
+            // Pass the category to run
+            const aiResult = await generateFromAllSources(categoryToRun);
+            console.log("AI Generation Result:", aiResult);
+        } catch (aiError) {
+            console.error("AI Generation Failed:", aiError);
+            // We verify the AI gen doesn't fail the whole request
+        }
+
+        // 5. Run Import
         console.log(`Starting RSS Import for category: ${categoryToRun}`);
         const stats = await importRssFeed(categoryToRun);
 

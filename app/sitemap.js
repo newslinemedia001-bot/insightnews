@@ -2,7 +2,7 @@ import { db } from '@/lib/firebase';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 
 export default async function sitemap() {
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://yourdomain.com';
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://insightnews.co.ke';
     
     // Fetch all articles
     const articlesQuery = query(collection(db, 'articles'), orderBy('createdAt', 'desc'));
