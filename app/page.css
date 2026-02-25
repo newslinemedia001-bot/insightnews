@@ -654,6 +654,18 @@
     .breaking-news-header-span {
         order: 1;
         margin-bottom: 0.75rem;
+        width: 100%;
+    }
+
+    .green-line-header {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .green-line-header h2 {
+        font-size: 0.75rem;
+        padding: 0 10px;
+        white-space: nowrap;
     }
 
     .breaking-hero-span {

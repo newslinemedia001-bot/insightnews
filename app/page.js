@@ -5,24 +5,25 @@ import RightSidebar from './components/RightSidebar';
 import './page.css';
 import { db } from '@/lib/firebase';
 import { collection, query, orderBy, limit, getDocs, where } from 'firebase/firestore';
+import Image from 'next/image';
 
 // Force dynamic rendering with caching for speed
 export const dynamic = 'force-dynamic';
-export const revalidate = 60; // Cache for 60 seconds
+export const revalidate = 120; // Cache for 2 minutes instead of 60 seconds
 
 async function getArticles() {
   const articlesRef = collection(db, 'articles');
 
-  // 1. Fetch Layout Data in parallel for speed
+  // Optimized: Reduce queries and limits for faster loading
   const breakingQ = query(articlesRef, where('isBreaking', '==', true), orderBy('createdAt', 'desc'), limit(1));
-  const politicsQ = query(articlesRef, where('category', '==', 'Politics'), orderBy('createdAt', 'desc'), limit(10));
+  const politicsQ = query(articlesRef, where('category', '==', 'Politics'), orderBy('createdAt', 'desc'), limit(6)); // Reduced from 10
   const newsQ = query(articlesRef, where('category', '==', 'News'), orderBy('createdAt', 'desc'), limit(4));
   const businessQ = query(articlesRef, where('category', '==', 'Business'), orderBy('createdAt', 'desc'), limit(4));
   const sportsQ = query(articlesRef, where('category', '==', 'Sports'), orderBy('createdAt', 'desc'), limit(4));
   const entertainmentQ = query(articlesRef, where('category', '==', 'Entertainment'), orderBy('createdAt', 'desc'), limit(4));
   const lifestyleQ = query(articlesRef, where('category', '==', 'Lifestyle'), orderBy('createdAt', 'desc'), limit(4));
   const opinionQ = query(articlesRef, where('category', '==', 'Opinion'), orderBy('createdAt', 'desc'), limit(4));
-  const latestQ = query(articlesRef, orderBy('createdAt', 'desc'), limit(20)); // For LeftSidebar + Text Grid
+  const latestQ = query(articlesRef, orderBy('createdAt', 'desc'), limit(12)); // Reduced from 20
 
   const [breakingSnap, politicsSnap, newsSnap, businessSnap, sportsSnap, entertainmentSnap, lifestyleSnap, opinionSnap, latestSnap] = await Promise.all([
     getDocs(breakingQ),
