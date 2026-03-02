@@ -17,26 +17,19 @@ export default function RichTextEditor({ value, onChange }) {
             ['clean']
         ],
         clipboard: {
-            matchVisual: true,
+            matchVisual: false,
             matchers: [
-                // Allow pasting from Word with formatting
-                ['B', function(node, delta) { return delta; }],
-                ['I', function(node, delta) { return delta; }],
-                ['U', function(node, delta) { return delta; }],
-                ['STRONG', function(node, delta) { return delta; }],
-                ['EM', function(node, delta) { return delta; }],
-                ['P', function(node, delta) { return delta; }],
-                ['H1', function(node, delta) { return delta; }],
-                ['H2', function(node, delta) { return delta; }],
-                ['H3', function(node, delta) { return delta; }],
-                ['H4', function(node, delta) { return delta; }],
-                ['H5', function(node, delta) { return delta; }],
-                ['H6', function(node, delta) { return delta; }],
-                ['UL', function(node, delta) { return delta; }],
-                ['OL', function(node, delta) { return delta; }],
-                ['LI', function(node, delta) { return delta; }],
-                ['A', function(node, delta) { return delta; }],
-                ['BLOCKQUOTE', function(node, delta) { return delta; }]
+                // Preserve paragraph breaks and spacing
+                ['BR', function(node, delta) {
+                    return delta.insert('\n');
+                }],
+                ['P', function(node, delta) {
+                    // Preserve paragraph spacing by adding newline after each paragraph
+                    return delta.insert('\n');
+                }],
+                ['DIV', function(node, delta) {
+                    return delta.insert('\n');
+                }]
             ]
         }
     };
