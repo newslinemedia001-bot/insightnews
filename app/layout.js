@@ -34,9 +34,6 @@ export const metadata = {
       'max-snippet': -1,
     },
   },
-  verification: {
-    google: '45y6rWjm11_u1tZ3OtKKttXBnMAlUXZqF2eR87MIJZ8',
-  },
   alternates: {
     canonical: 'https://insightnews.co.ke',
   },
