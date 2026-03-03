@@ -3,6 +3,9 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100vw;
 }
 
 .main-content {
@@ -638,10 +641,15 @@
 @media (max-width: 768px) {
     .main-content {
         padding: 0.5rem 0;
+        overflow-x: hidden;
+        width: 100%;
     }
 
     .container {
         padding: 0 10px;
+        overflow-x: hidden;
+        width: 100%;
+        max-width: 100vw;
     }
 
     /* Mobile: Single column, hide sidebars initially, show breaking + center content */
@@ -649,6 +657,8 @@
         display: flex;
         flex-direction: column;
         gap: 0;
+        overflow-x: hidden;
+        width: 100%;
     }
 
     .breaking-news-header-span {
@@ -694,16 +704,20 @@
         flex-direction: column;
         padding: 0;
         gap: 0;
+        width: 100%;
+        overflow: hidden;
     }
 
     .breaking-hero-image {
         width: 100%;
         margin-bottom: 0.75rem;
+        overflow: hidden;
     }
 
     .breaking-hero-image img {
         height: 200px;
         width: 100%;
+        object-fit: cover;
     }
 
     .breaking-hero-text {
@@ -809,6 +823,13 @@
     .entertainment-grid {
         grid-template-columns: 1fr !important;
         gap: 1.25rem !important;
+        width: 100%;
+        overflow-x: hidden;
+    }
+
+    .image-article {
+        width: 100%;
+        overflow: hidden;
     }
 
     .image-article h4 {
@@ -816,8 +837,15 @@
         line-height: 1.3;
     }
 
+    .article-image-wrapper {
+        width: 100%;
+        overflow: hidden;
+    }
+
     .article-image-wrapper img {
         aspect-ratio: 16/9;
+        width: 100%;
+        height: auto;
     }
 
     /* Category Articles - Mobile */

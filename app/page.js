@@ -98,7 +98,15 @@ export default async function Home() {
                 <a href={`/${mainHero.slug}`} style={{ color: 'inherit', textDecoration: 'none', display: 'block' }}>
                   <div className="breaking-hero">
                     <div className="breaking-hero-image">
-                      <img src={mainHero.image || mainHero.featuredImage || "/images/placeholder.png"} alt={mainHero.title} />
+                      <Image 
+                        src={mainHero.image || mainHero.featuredImage || "/images/placeholder.png"} 
+                        alt={mainHero.title}
+                        width={280}
+                        height={180}
+                        priority
+                        quality={85}
+                        style={{ width: '100%', height: '180px', objectFit: 'cover' }}
+                      />
                     </div>
                     <div className="breaking-hero-text">
                       <span className="breaking-badge">BREAKING</span>
@@ -130,7 +138,15 @@ export default async function Home() {
                 {reviewStory && (
                   <a href={`/${reviewStory.slug}`} style={{ color: 'inherit', textDecoration: 'none', display: 'block' }}>
                     <div className="newspaper-reviews-section">
-                      <img src={reviewStory.image || reviewStory.featuredImage || "/images/placeholder.png"} alt={reviewStory.title} />
+                      <Image 
+                        src={reviewStory.image || reviewStory.featuredImage || "/images/placeholder.png"} 
+                        alt={reviewStory.title}
+                        width={280}
+                        height={200}
+                        priority
+                        quality={80}
+                        style={{ width: '280px', height: 'auto' }}
+                      />
                       <div className="review-content">
                         <h4>{reviewStory.title}</h4>
                         <p className="review-excerpt">{reviewStory.description}</p>
@@ -149,7 +165,15 @@ export default async function Home() {
                   {remainingGrid.map(story => (
                     <article key={story.id} className="news-item">
                       <a href={`/${story.slug}`} style={{ color: 'inherit', textDecoration: 'none', display: 'contents' }}>
-                        <img src={story.image || story.featuredImage || "/images/placeholder.png"} alt={story.title} />
+                        <Image 
+                          src={story.image || story.featuredImage || "/images/placeholder.png"} 
+                          alt={story.title}
+                          width={80}
+                          height={60}
+                          loading="lazy"
+                          quality={70}
+                          style={{ width: '80px', height: '60px', objectFit: 'cover' }}
+                        />
                         <div className="news-item-content">
                           <div className="news-meta">
                             <span className="category">{story.category}</span>
@@ -179,7 +203,15 @@ export default async function Home() {
                     <a href={`/${story.slug}`} style={{ color: 'inherit', textDecoration: 'none', display: 'block' }}>
                       <div className="article-image-wrapper">
                         <div className="corner-ribbon"></div>
-                        <img src={story.image || story.featuredImage || "/images/placeholder.png"} alt={story.title} />
+                        <Image 
+                          src={story.image || story.featuredImage || "/images/placeholder.png"} 
+                          alt={story.title}
+                          width={300}
+                          height={200}
+                          loading={i < 2 ? "eager" : "lazy"}
+                          quality={75}
+                          style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
+                        />
                       </div>
                       {i === 0 && <span className="exclusive-badge">EXCLUSIVE</span>}
                       <h4>{story.title}</h4>

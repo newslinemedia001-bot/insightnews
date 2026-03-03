@@ -42,6 +42,7 @@ export async function generateMetadata({ params }) {
             images: article.image || article.featuredImage ? [article.image || article.featuredImage] : [],
             type: 'article',
             publishedTime: article.createdAt ? new Date(article.createdAt.seconds * 1000).toISOString() : undefined,
+            url: `https://insightnews.co.ke/${slug}`,
         },
         twitter: {
             card: 'summary_large_image',
@@ -56,6 +57,9 @@ export async function generateMetadata({ params }) {
                 index: true,
                 follow: true,
             },
+        },
+        alternates: {
+            canonical: `https://insightnews.co.ke/${slug}`,
         },
     };
 }
@@ -244,6 +248,38 @@ export default async function Page({ params }) {
                     {/* Article with Sidebar Layout */}
                     <div className="article-with-sidebar">
                         <div className="article-container">
+                            {/* JSON-LD Structured Data for SEO */}
+                            <script
+                                type="application/ld+json"
+                                dangerouslySetInnerHTML={{
+                                    __html: JSON.stringify({
+                                        "@context": "https://schema.org",
+                                        "@type": "NewsArticle",
+                                        "headline": article.title,
+                                        "description": article.description || article.summary,
+                                        "image": article.image || article.featuredImage,
+                                        "datePublished": article.createdAt ? new Date(article.createdAt.seconds * 1000).toISOString() : undefined,
+                                        "dateModified": article.updatedAt ? new Date(article.updatedAt.seconds * 1000).toISOString() : article.createdAt ? new Date(article.createdAt.seconds * 1000).toISOString() : undefined,
+                                        "author": {
+                                            "@type": "Person",
+                                            "name": article.author
+                                        },
+                                        "publisher": {
+                                            "@type": "Organization",
+                                            "name": "InsightNews",
+                                            "logo": {
+                                                "@type": "ImageObject",
+                                                "url": "https://insightnews.co.ke/insightnews.jpeg"
+                                            }
+                                        },
+                                        "mainEntityOfPage": {
+                                            "@type": "WebPage",
+                                            "@id": `https://insightnews.co.ke/${article.slug}`
+                                        }
+                                    })
+                                }}
+                            />
+
                             <h1 className="article-title">{article.title}</h1>
 
                             {/* Summary Box */}

@@ -16,6 +16,12 @@
   --border-gray: #e0e0e0;
 }
 
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
+}
+
 body {
   font-family: 'Open Sans', Arial, sans-serif;
   font-size: 16px;
@@ -38,6 +44,8 @@ img {
   max-width: 100%;
   height: auto;
   display: block;
+  image-rendering: auto;
+  image-rendering: -webkit-optimize-contrast;
 }
 
 /* Container */
