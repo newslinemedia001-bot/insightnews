@@ -12,8 +12,8 @@ function formatDate(timestamp) {
 }
 
 export default function RightSidebar({ articles = [], title = "NEWS" }) {
-    // Increase to 9 articles to fill the space
-    const displayArticles = articles.slice(0, 9);
+    // Limit to 6 articles to balance height with the left sidebar
+    const displayArticles = articles.slice(0, 6);
 
     return (
         <div className="right-sidebar-container">

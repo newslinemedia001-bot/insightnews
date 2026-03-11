@@ -17,7 +17,7 @@ async function getArticles() {
   // Optimized: Reduce queries and limits for faster loading
   const breakingQ = query(articlesRef, where('isBreaking', '==', true), orderBy('createdAt', 'desc'), limit(1));
   const politicsQ = query(articlesRef, where('category', '==', 'Politics'), orderBy('createdAt', 'desc'), limit(4)); // Reduced
-  const newsQ = query(articlesRef, where('category', '==', 'News'), orderBy('createdAt', 'desc'), limit(6)); // Increased slightly
+  const newsQ = query(articlesRef, where('category', '==', 'News'), orderBy('createdAt', 'desc'), limit(8)); // Increased slightly
   const businessQ = query(articlesRef, where('category', '==', 'Business'), orderBy('createdAt', 'desc'), limit(4));
   const sportsQ = query(articlesRef, where('category', '==', 'Sports'), orderBy('createdAt', 'desc'), limit(4));
   const entertainmentQ = query(articlesRef, where('category', '==', 'Entertainment'), orderBy('createdAt', 'desc'), limit(4));
