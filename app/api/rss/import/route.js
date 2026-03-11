@@ -1,0 +1,126 @@
+import { NextResponse } from 'next/server';
+import { importRssFeed } from '@/lib/rss';
+import { generateFromAllSources } from '@/lib/ai-content';
+import { db, auth } from '@/lib/firebase';
+import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { signInAnonymously } from 'firebase/auth';
+
+export const maxDuration = 60; // Set max duration for serverless function (optional, varies by platform)
+
+export async function POST(request) {
+    try {
+        // 1. Authentication
+        const apiKey = request.headers.get('x-api-key');
+        const authHeader = request.headers.get('authorization');
+
+        // You should store this securely in env vars
+        const validApiKey = process.env.RSS_API_KEY;
+
+        let isAuthenticated = false;
+        if (apiKey === validApiKey) isAuthenticated = true;
+        if (authHeader && authHeader.startsWith('Bearer ') && authHeader.split(' ')[1] === validApiKey) isAuthenticated = true;
+
+        if (!isAuthenticated) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        // 1.5. Firebase Auth (Satisfy Firestore Rules)
+        // Your rules require 'request.auth != null' for writes.
+        // We sign in anonymously to get a valid auth token for this server-side session.
+        try {
+            await signInAnonymously(auth);
+        } catch (authError) {
+            console.error("RSS Auth Error: Could not sign in anonymously. Ensure 'Anonymous' provider is enabled in Firebase Console.", authError);
+            // We continue anyway, in case rules have changed, but it will likely fail.
+        }
+
+        // 2. Parse Body (for manual mode)
+        let body = {};
+        try {
+            body = await request.json();
+        } catch (e) {
+            // Body might be empty
+        }
+
+        // 1.8 Check for AI Only trigger
+        if (body.action === 'ai_only') {
+            console.log("Triggering Manual AI Generation (AI Only Mode)...");
+            try {
+                // Pass the requested category if available
+                const aiResult = await generateFromAllSources(body.category);
+                return NextResponse.json({
+                    success: true,
+                    mode: 'ai_only',
+                    result: aiResult
+                });
+            } catch (error) {
+                console.error("Manual AI Generation Failed:", error);
+                return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+            }
+        }
+
+        const manualCategory = body.category || null;
+
+        // 3. Rotation Logic (if no manual category)
+        let categoryToRun = manualCategory;
+
+        if (!manualCategory) {
+            // Get last rotation state
+            const rotationRef = doc(db, 'settings', 'rssRotation');
+            const rotationSnap = await getDoc(rotationRef);
+
+            const rotationData = rotationSnap.exists() ? rotationSnap.data() : { lastCategory: null, allCategories: ['news', 'politics', 'world', 'business', 'entertainment', 'sports', 'lifestyle', 'opinion'] };
+
+            // Determine next category
+            const allCats = rotationData.allCategories || ['news', 'politics', 'world', 'business', 'entertainment', 'sports', 'lifestyle', 'opinion'];
+            const lastCat = rotationData.lastCategory;
+
+            let nextIndex = 0;
+            if (lastCat) {
+                const lastIndex = allCats.indexOf(lastCat);
+                if (lastIndex >= 0 && lastIndex < allCats.length - 1) {
+                    nextIndex = lastIndex + 1;
+                }
+            }
+
+            categoryToRun = allCats[nextIndex];
+
+            // Update rotation state for NEXT time (optimistic update)
+            await setDoc(rotationRef, {
+                ...rotationData,
+                lastCategory: categoryToRun,
+                updatedAt: serverTimestamp()
+            }, { merge: true });
+        }
+
+        // 4. Run AI Generation (One article per trigger)
+        // We do this BEFORE the main import to ensure we satisfy the request quickly, 
+        // and prevent the original RSS feed for this item from being imported (duplicate check).
+        console.log("Triggering AI Content Generation...");
+        try {
+            // Pass the category to run
+            const aiResult = await generateFromAllSources(categoryToRun);
+            console.log("AI Generation Result:", aiResult);
+        } catch (aiError) {
+            console.error("AI Generation Failed:", aiError);
+            // We verify the AI gen doesn't fail the whole request
+        }
+
+        // 5. Run Import
+        console.log(`Starting RSS Import for category: ${categoryToRun}`);
+        const stats = await importRssFeed(categoryToRun);
+
+        return NextResponse.json({
+            success: true,
+            message: `Import completed for ${categoryToRun}`,
+            stats
+        });
+
+    } catch (error) {
+        console.error('RSS Route Error:', error);
+        return NextResponse.json({
+            success: false,
+            error: error.message
+        }, { status: 500 });
+    }
+}
