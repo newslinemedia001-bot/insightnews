@@ -13,7 +13,8 @@ async function searchArticles(searchQuery) {
   const q = query(articlesRef, orderBy('createdAt', 'desc'));
   const snapshot = await getDocs(q);
   
-  const allArticles = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  const allArticles = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+    .filter(article => !article.status || article.status === 'published'); // Filter out drafts
   
   // Helper function to strip HTML tags
   const stripHtml = (html) => {

@@ -24,7 +24,8 @@ function ArticleEditorContent() {
         image: '',
         author: '',
         focusKeyword: '',
-        isBreaking: false
+        isBreaking: false,
+        status: 'published' // 'draft' or 'published'
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -75,26 +76,30 @@ function ArticleEditorContent() {
         setFormData(prev => ({ ...prev, image: url }));
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e, saveAsDraft = false) => {
         e.preventDefault();
         if (isSubmitting) return;
 
         setIsSubmitting(true);
         try {
-            const dataToSave = { ...formData, updatedAt: serverTimestamp() };
+            const dataToSave = { 
+                ...formData, 
+                status: saveAsDraft ? 'draft' : 'published',
+                updatedAt: serverTimestamp() 
+            };
             if (articleId) {
                 await updateDoc(doc(db, 'articles', articleId), dataToSave);
-                alert("Article updated successfully!");
+                alert(saveAsDraft ? "Article saved as draft!" : "Article updated successfully!");
             } else {
                 dataToSave.createdAt = serverTimestamp();
                 dataToSave.views = 0;
                 await addDoc(collection(db, 'articles'), dataToSave);
-                alert("Article published successfully!");
+                alert(saveAsDraft ? "Article saved as draft!" : "Article published successfully!");
             }
             router.push('/admin/dashboard');
         } catch (error) {
             console.error("Error saving article:", error);
-            alert("Error saving article");
+            alert("Error saving article: " + error.message);
             setIsSubmitting(false);
         }
     };
@@ -110,11 +115,26 @@ function ArticleEditorContent() {
                     <ArrowLeft size={18} style={{ marginRight: '5px' }} /> Back to Dashboard
                 </button>
 
-                <h1 style={{ marginBottom: '2rem', fontSize: '2rem', color: '#111827', fontWeight: '800' }}>
-                    {articleId ? 'Edit Article' : 'Create New Article'}
-                </h1>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+                    <h1 style={{ fontSize: '2rem', color: '#111827', fontWeight: '800', margin: 0 }}>
+                        {articleId ? 'Edit Article' : 'Create New Article'}
+                    </h1>
+                    
+                    {formData.status && (
+                        <div style={{ 
+                            padding: '0.5rem 1rem', 
+                            borderRadius: '20px', 
+                            fontSize: '0.875rem', 
+                            fontWeight: '600',
+                            background: formData.status === 'published' ? '#dcfce7' : '#fef3c7',
+                            color: formData.status === 'published' ? '#166534' : '#92400e'
+                        }}>
+                            {formData.status === 'published' ? '✓ Published' : '📝 Draft'}
+                        </div>
+                    )}
+                </div>
 
-                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+                <form onSubmit={(e) => handleSubmit(e, false)} style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
 
                     {/* Title Area */}
                     <div style={{ background: 'white', padding: '2rem', borderRadius: '12px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)' }}>
@@ -200,8 +220,8 @@ function ArticleEditorContent() {
                         <ImageUploader currentImage={formData.image} onImageUpload={handleImageUpload} />
                     </div>
 
-                    {/* Submit Action */}
-                    <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '1.5rem', marginTop: '1rem' }}>
+                    {/* Submit Actions */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1.5rem', marginTop: '1rem' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                             <input
                                 type="checkbox"
@@ -213,23 +233,44 @@ function ArticleEditorContent() {
                             <label htmlFor="isBreaking" style={{ fontWeight: '500', color: '#374151', cursor: 'pointer' }}>Set as Main Breaking News</label>
                         </div>
 
-                        <button
-                            type="submit"
-                            disabled={isSubmitting}
-                            style={{
-                                padding: '0.875rem 2.5rem',
-                                background: isSubmitting ? '#93c5fd' : '#2563eb',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '8px',
-                                fontSize: '1rem',
-                                fontWeight: '600',
-                                cursor: isSubmitting ? 'not-allowed' : 'pointer',
-                                boxShadow: '0 2px 4px rgba(37, 99, 235, 0.2)'
-                            }}
-                        >
-                            {isSubmitting ? (articleId ? 'Updating...' : 'Publishing...') : (articleId ? 'Update' : 'Publish')}
-                        </button>
+                        <div style={{ display: 'flex', gap: '1rem' }}>
+                            <button
+                                type="button"
+                                onClick={(e) => handleSubmit(e, true)}
+                                disabled={isSubmitting}
+                                style={{
+                                    padding: '0.875rem 2rem',
+                                    background: isSubmitting ? '#d1d5db' : '#6b7280',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '8px',
+                                    fontSize: '1rem',
+                                    fontWeight: '600',
+                                    cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                                    boxShadow: '0 2px 4px rgba(107, 114, 128, 0.2)'
+                                }}
+                            >
+                                {isSubmitting ? 'Saving...' : 'Save as Draft'}
+                            </button>
+
+                            <button
+                                type="submit"
+                                disabled={isSubmitting}
+                                style={{
+                                    padding: '0.875rem 2.5rem',
+                                    background: isSubmitting ? '#93c5fd' : '#2563eb',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '8px',
+                                    fontSize: '1rem',
+                                    fontWeight: '600',
+                                    cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                                    boxShadow: '0 2px 4px rgba(37, 99, 235, 0.2)'
+                                }}
+                            >
+                                {isSubmitting ? (articleId ? 'Updating...' : 'Publishing...') : (articleId ? 'Update' : 'Publish')}
+                            </button>
+                        </div>
                     </div>
 
                 </form>

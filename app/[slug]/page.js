@@ -72,9 +72,11 @@ async function getItem(slug) {
 
     if (knownCategories.includes(categoryName)) {
         // Fetch articles for this category
-        const q = query(collection(db, 'articles'), where('category', '==', categoryName), orderBy('createdAt', 'desc'), limit(20));
+        const q = query(collection(db, 'articles'), where('category', '==', categoryName), orderBy('createdAt', 'desc'), limit(30));
         const snapshot = await getDocs(q);
-        const articles = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const articles = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+            .filter(article => !article.status || article.status === 'published') // Filter out drafts
+            .slice(0, 20);
         return { type: 'category', data: articles, name: categoryName };
     }
 
@@ -86,6 +88,11 @@ async function getItem(slug) {
         const doc = snapshot.docs[0];
         const articleData = { id: doc.id, ...doc.data() };
 
+        // Check if article is published (don't show drafts)
+        if (articleData.status === 'draft') {
+            return null;
+        }
+
         // Fetch related articles from same category
         const relatedQ = query(
             collection(db, 'articles'),
@@ -96,18 +103,20 @@ async function getItem(slug) {
             limit(4)
         );
         const relatedSnapshot = await getDocs(relatedQ);
-        const relatedArticles = relatedSnapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        const relatedArticles = relatedSnapshot.docs.map(d => ({ id: d.id, ...d.data() }))
+            .filter(article => !article.status || article.status === 'published'); // Filter out drafts
 
         // Fetch latest articles for "Read Also" links and sidebar
         const latestQ = query(
             collection(db, 'articles'),
             orderBy('createdAt', 'desc'),
-            limit(15)
+            limit(25)
         );
         const latestSnapshot = await getDocs(latestQ);
         const latestArticles = latestSnapshot.docs
             .map(d => ({ id: d.id, ...d.data() }))
-            .filter(a => a.slug !== slug); // Exclude current article
+            .filter(a => a.slug !== slug && (!a.status || a.status === 'published')) // Exclude current article and drafts
+            .slice(0, 15);
 
         // Fetch opinion articles for sidebar (with error handling)
         let opinionArticles = [];
@@ -119,7 +128,8 @@ async function getItem(slug) {
                 limit(5)
             );
             const opinionSnapshot = await getDocs(opinionQ);
-            opinionArticles = opinionSnapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+            opinionArticles = opinionSnapshot.docs.map(d => ({ id: d.id, ...d.data() }))
+                .filter(article => !article.status || article.status === 'published'); // Filter out drafts
         } catch (error) {
             console.log('Opinion articles query failed, using latest instead');
             // Fallback to latest articles if Opinion query fails

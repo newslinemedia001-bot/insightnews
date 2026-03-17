@@ -14,16 +14,19 @@ export const revalidate = 120; // Cache for 2 minutes instead of 60 seconds
 async function getArticles() {
   const articlesRef = collection(db, 'articles');
 
+  // Only fetch published articles (status is 'published' or doesn't exist for backward compatibility)
+  // Note: Firebase doesn't support OR queries easily, so we'll filter client-side for now
+  
   // Optimized: Reduce queries and limits for faster loading
-  const breakingQ = query(articlesRef, where('isBreaking', '==', true), orderBy('createdAt', 'desc'), limit(1));
-  const politicsQ = query(articlesRef, where('category', '==', 'Politics'), orderBy('createdAt', 'desc'), limit(4)); // Reduced
-  const newsQ = query(articlesRef, where('category', '==', 'News'), orderBy('createdAt', 'desc'), limit(8)); // Increased slightly
-  const businessQ = query(articlesRef, where('category', '==', 'Business'), orderBy('createdAt', 'desc'), limit(4));
-  const sportsQ = query(articlesRef, where('category', '==', 'Sports'), orderBy('createdAt', 'desc'), limit(4));
-  const entertainmentQ = query(articlesRef, where('category', '==', 'Entertainment'), orderBy('createdAt', 'desc'), limit(4));
-  const lifestyleQ = query(articlesRef, where('category', '==', 'Lifestyle'), orderBy('createdAt', 'desc'), limit(4));
-  const opinionQ = query(articlesRef, where('category', '==', 'Opinion'), orderBy('createdAt', 'desc'), limit(4));
-  const latestQ = query(articlesRef, orderBy('createdAt', 'desc'), limit(12)); // Reduced from 20
+  const breakingQ = query(articlesRef, where('isBreaking', '==', true), orderBy('createdAt', 'desc'), limit(3));
+  const politicsQ = query(articlesRef, where('category', '==', 'Politics'), orderBy('createdAt', 'desc'), limit(6)); 
+  const newsQ = query(articlesRef, where('category', '==', 'News'), orderBy('createdAt', 'desc'), limit(15)); 
+  const businessQ = query(articlesRef, where('category', '==', 'Business'), orderBy('createdAt', 'desc'), limit(6));
+  const sportsQ = query(articlesRef, where('category', '==', 'Sports'), orderBy('createdAt', 'desc'), limit(6));
+  const entertainmentQ = query(articlesRef, where('category', '==', 'Entertainment'), orderBy('createdAt', 'desc'), limit(6));
+  const lifestyleQ = query(articlesRef, where('category', '==', 'Lifestyle'), orderBy('createdAt', 'desc'), limit(6));
+  const opinionQ = query(articlesRef, where('category', '==', 'Opinion'), orderBy('createdAt', 'desc'), limit(6));
+  const latestQ = query(articlesRef, orderBy('createdAt', 'desc'), limit(25));
 
   const [breakingSnap, politicsSnap, newsSnap, businessSnap, sportsSnap, entertainmentSnap, lifestyleSnap, opinionSnap, latestSnap] = await Promise.all([
     getDocs(breakingQ),
@@ -37,18 +40,19 @@ async function getArticles() {
     getDocs(latestQ)
   ]);
 
-  const mapDocs = (snap) => snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  const mapDocs = (snap) => snap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+    .filter(article => !article.status || article.status === 'published'); // Filter out drafts
 
   return {
     breakingNews: mapDocs(breakingSnap)[0],
-    politicsNews: mapDocs(politicsSnap),
-    newsArticles: mapDocs(newsSnap),
-    businessNews: mapDocs(businessSnap),
-    sportsNews: mapDocs(sportsSnap),
-    entertainmentNews: mapDocs(entertainmentSnap),
-    lifestyleNews: mapDocs(lifestyleSnap),
-    opinionNews: mapDocs(opinionSnap),
-    latestNews: mapDocs(latestSnap)
+    politicsNews: mapDocs(politicsSnap).slice(0, 4),
+    newsArticles: mapDocs(newsSnap).slice(0, 11), // Increased for right sidebar (9) + center content
+    businessNews: mapDocs(businessSnap).slice(0, 4),
+    sportsNews: mapDocs(sportsSnap).slice(0, 4),
+    entertainmentNews: mapDocs(entertainmentSnap).slice(0, 4),
+    lifestyleNews: mapDocs(lifestyleSnap).slice(0, 4),
+    opinionNews: mapDocs(opinionSnap).slice(0, 4),
+    latestNews: mapDocs(latestSnap).slice(0, 18) // Increased for left sidebar (6) + center content
   };
 }
 

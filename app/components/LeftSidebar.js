@@ -13,8 +13,8 @@ function formatDate(timestamp) {
 }
 
 export default function LeftSidebar({ articles = [] }) {
-    // Reduce articles to match middle column height
-    const displayArticles = articles.slice(0, 5);
+    // Show 6 articles to balance with middle column height
+    const displayArticles = articles.slice(0, 6);
 
     return (
         <div className="left-sidebar-container">

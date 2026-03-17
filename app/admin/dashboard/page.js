@@ -70,6 +70,7 @@ export default function AdminDashboard() {
                     <thead>
                         <tr style={{ background: '#f8f9fa', textAlign: 'left' }}>
                             <th style={{ padding: '1rem', borderBottom: '1px solid #dee2e6' }}>Title</th>
+                            <th style={{ padding: '1rem', borderBottom: '1px solid #dee2e6' }}>Status</th>
                             <th style={{ padding: '1rem', borderBottom: '1px solid #dee2e6' }}>Category</th>
                             <th style={{ padding: '1rem', borderBottom: '1px solid #dee2e6' }}>Date</th>
                             <th style={{ padding: '1rem', borderBottom: '1px solid #dee2e6' }}>Actions</th>
@@ -79,6 +80,18 @@ export default function AdminDashboard() {
                         {articles.map(article => (
                             <tr key={article.id} style={{ borderBottom: '1px solid #dee2e6' }}>
                                 <td style={{ padding: '1rem' }}>{article.title}</td>
+                                <td style={{ padding: '1rem' }}>
+                                    <span style={{ 
+                                        padding: '0.25rem 0.75rem', 
+                                        borderRadius: '12px', 
+                                        fontSize: '0.75rem', 
+                                        fontWeight: '600',
+                                        background: (article.status === 'published' || !article.status) ? '#dcfce7' : '#fef3c7',
+                                        color: (article.status === 'published' || !article.status) ? '#166534' : '#92400e'
+                                    }}>
+                                        {(article.status === 'published' || !article.status) ? 'Published' : 'Draft'}
+                                    </span>
+                                </td>
                                 <td style={{ padding: '1rem' }}>{article.category}</td>
                                 <td style={{ padding: '1rem' }}>{new Date(article.createdAt?.seconds * 1000).toLocaleDateString()}</td>
                                 <td style={{ padding: '1rem' }}>
