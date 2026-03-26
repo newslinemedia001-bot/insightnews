@@ -102,6 +102,37 @@ export default function RssFeedsAdmin() {
         setEditingId(null);
     };
 
+    const handleTestFeeds = async () => {
+        setImportStatus('Testing all RSS feeds...');
+        try {
+            const response = await fetch('/api/rss/test');
+            const result = await response.json();
+            
+            if (result.success) {
+                let statusMessage = `Feed Test Results:\n`;
+                statusMessage += `Total: ${result.summary.total}, Working: ${result.summary.working}, Errors: ${result.summary.errors}\n\n`;
+                
+                Object.entries(result.summary.byCategory).forEach(([category, stats]) => {
+                    statusMessage += `${category.toUpperCase()}: ${stats.working}/${stats.total} working\n`;
+                    stats.feeds.forEach(feed => {
+                        if (feed.status === 'error') {
+                            statusMessage += `  ❌ ${feed.name}: ${feed.error}\n`;
+                        } else {
+                            statusMessage += `  ✅ ${feed.name}: ${feed.itemCount} items\n`;
+                        }
+                    });
+                    statusMessage += '\n';
+                });
+                
+                setImportStatus(statusMessage);
+            } else {
+                setImportStatus(`Test failed: ${result.error}`);
+            }
+        } catch (error) {
+            setImportStatus(`Test error: ${error.message}`);
+        }
+    };
+
     const handleManualImport = async (category) => {
         setImportStatus(`Starting import for ${category}...`);
         try {
@@ -248,12 +279,20 @@ export default function RssFeedsAdmin() {
         <div style={containerStyle}>
             <div style={headerStyle}>
                 <h1 style={{ fontSize: '2rem', fontWeight: 'bold' }}>RSS Feed Manager</h1>
-                <button
-                    onClick={() => setIsAdding(true)}
-                    style={buttonStyle}
-                >
-                    <Plus size={20} /> Add New Feed
-                </button>
+                <div style={{ display: 'flex', gap: '1rem' }}>
+                    <button
+                        onClick={handleTestFeeds}
+                        style={{ ...buttonStyle, backgroundColor: '#17a2b8' }}
+                    >
+                        <Play size={20} /> Test All Feeds
+                    </button>
+                    <button
+                        onClick={() => setIsAdding(true)}
+                        style={buttonStyle}
+                    >
+                        <Plus size={20} /> Add New Feed
+                    </button>
+                </div>
             </div>
 
             {importStatus && (
