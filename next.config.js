@@ -22,12 +22,10 @@ const nextConfig = {
   },
   // Enable compression
   compress: true,
-  // Optimize production builds
-  swcMinify: true,
   // Enable experimental features for speed
   experimental: {
     optimizeCss: true,
-  },
+  }, 
   // Reduce bundle size
   poweredByHeader: false,
 }
