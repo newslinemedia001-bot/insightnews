@@ -17,9 +17,7 @@
 }
 
 html, body {
-  overflow-x: hidden;
   width: 100%;
-  max-width: 100vw;
 }
 
 body {
@@ -28,6 +26,8 @@ body {
   line-height: 1.6;
   color: var(--text-primary);
   background-color: var(--bg-white);
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 a {
