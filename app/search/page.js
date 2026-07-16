@@ -88,29 +88,19 @@ export default async function SearchPage({ searchParams }) {
             )}
 
             {results.length > 0 ? (
-              <div style={{ display: 'grid', gap: '1.5rem' }}>
+              <div className="category-page-grid">
                 {results.map(article => (
-                  <article key={article.id} style={{ 
-                    display: 'flex', 
-                    gap: '1rem', 
-                    padding: '1rem',
-                    border: '1px solid #e0e0e0',
-                    borderRadius: '4px'
-                  }}>
+                  <article key={article.id} className="category-page-item">
                     <a href={`/${article.slug}`} style={{ display: 'contents', textDecoration: 'none', color: 'inherit' }}>
                       {article.image && (
-                        <img 
-                          src={article.image} 
-                          alt={article.title}
-                          style={{ 
-                            width: '200px', 
-                            height: '150px', 
-                            objectFit: 'cover',
-                            borderRadius: '4px'
-                          }}
-                        />
+                        <div className="category-page-image">
+                          <img 
+                            src={article.image} 
+                            alt={article.title}
+                          />
+                        </div>
                       )}
-                      <div style={{ flex: 1 }}>
+                      <div className="news-item-content">
                         <div style={{ 
                           fontSize: '0.75rem', 
                           color: '#666', 
@@ -123,19 +113,10 @@ export default async function SearchPage({ searchParams }) {
                           </span>
                           <span>{formatDate(article.createdAt)}</span>
                         </div>
-                        <h3 style={{ 
-                          fontSize: '1.2rem', 
-                          fontWeight: 'bold',
-                          marginBottom: '0.5rem',
-                          lineHeight: '1.4'
-                        }}>
+                        <h3>
                           {article.title}
                         </h3>
-                        <p style={{ 
-                          color: '#444', 
-                          fontSize: '0.9rem',
-                          lineHeight: '1.5'
-                        }}>
+                        <p>
                           {article.description}
                         </p>
                       </div>

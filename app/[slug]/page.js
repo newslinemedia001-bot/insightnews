@@ -185,21 +185,23 @@ export default async function Page({ params }) {
 
                         {/* Full width category list, no sidebar */}
                         <div className="category-container" style={{ maxWidth: '1000px', margin: '0 auto' }}>
-                            <div className="news-grid" style={{ gridTemplateColumns: '1fr', gap: '2rem' }}>
+                            <div className="news-grid category-page-grid">
                                 {item.data.length === 0 && <p>No articles in this category yet.</p>}
                                 {item.data.map(story => (
-                                    <article key={story.id} className="news-item" style={{ display: 'flex', gap: '1.5rem', marginBottom: '1.5rem', alignItems: 'flex-start', background: 'white', padding: '1rem', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+                                    <article key={story.id} className="news-item category-page-item">
                                         {(story.image || story.featuredImage) && (
-                                            <img src={story.image || story.featuredImage} alt={story.title} style={{ width: '250px', height: '160px', objectFit: 'cover', borderRadius: '4px', flexShrink: 0 }} />
+                                            <div className="category-page-image">
+                                                <img src={story.image || story.featuredImage} alt={story.title} />
+                                            </div>
                                         )}
-                                        <div className="news-item-content" style={{ flex: 1 }}>
+                                        <div className="news-item-content">
                                             <a href={`/${story.slug}`} style={{ color: 'inherit', textDecoration: 'none' }}>
-                                                <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.4rem' }}>{story.title}</h3>
+                                                <h3>{story.title}</h3>
                                             </a>
-                                            <p style={{ margin: '0 0 0.75rem 0', fontSize: '1rem', color: '#555', lineHeight: '1.5' }}>{story.description}</p>
+                                            <p>{story.description}</p>
                                             <div className="news-meta">
-                                                <span className="time" style={{ color: '#888', fontSize: '0.85rem' }}>{formatDate(story.createdAt)}</span>
-                                                <span className="author" style={{ marginLeft: '1rem', color: '#888', fontSize: '0.85rem' }}>By: {story.author}</span>
+                                                <span className="time">{formatDate(story.createdAt)}</span>
+                                                <span className="author">By: {story.author}</span>
                                             </div>
                                         </div>
                                     </article>
