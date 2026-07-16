@@ -149,7 +149,7 @@ export default async function Home() {
                         height={200}
                         priority
                         quality={80}
-                        style={{ width: '280px', height: 'auto' }}
+                        style={{ width: '100%', maxWidth: '280px', height: 'auto' }}
                       />
                       <div className="review-content">
                         <h4>{reviewStory.title}</h4>
