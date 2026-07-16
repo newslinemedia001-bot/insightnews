@@ -122,10 +122,59 @@
 }
 
 .article-body img {
-    max-width: 100%;
-    height: auto;
-    margin: 1.5rem 0;
+    max-width: 100% !important;
+    width: auto !important;
+    height: auto !important;
+    margin: 1.5rem auto;
     border-radius: 4px;
+    display: block;
+}
+
+/* Quill editor outputs iframes for videos — make them responsive */
+.article-body iframe,
+.article-body .ql-video {
+    max-width: 100% !important;
+    width: 100% !important;
+    height: auto;
+    aspect-ratio: 16/9;
+    display: block;
+    margin: 1.5rem 0;
+    border: none;
+}
+
+/* Quill alignment classes */
+.article-body .ql-align-center {
+    text-align: center;
+}
+.article-body .ql-align-right {
+    text-align: right;
+}
+.article-body .ql-align-justify {
+    text-align: justify;
+}
+
+/* Quill indent classes */
+.article-body .ql-indent-1 { padding-left: 2em; }
+.article-body .ql-indent-2 { padding-left: 4em; }
+.article-body .ql-indent-3 { padding-left: 6em; }
+
+/* Tables from Quill — make scrollable on mobile */
+.article-body table {
+    width: 100%;
+    max-width: 100%;
+    border-collapse: collapse;
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 1.5rem 0;
+}
+
+.article-body table td,
+.article-body table th {
+    border: 1px solid #e5e7eb;
+    padding: 0.5rem;
+    min-width: 80px;
+    word-break: break-word;
 }
 
 .article-body a {
@@ -635,6 +684,8 @@
     gap: 2rem;
     max-width: 1200px;
     margin: 0 auto;
+    min-width: 0;
+    overflow-x: hidden;
 }
 
 /* Sidebar Styles */
@@ -642,6 +693,13 @@
     position: sticky;
     top: 1rem;
     align-self: start;
+    min-width: 0;
+}
+
+.article-container {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .sidebar-section {
@@ -750,6 +808,32 @@
 
     .sidebar-article-meta {
         font-size: 0.65rem;
+    }
+
+    /* Force all images inside article body to fit on mobile */
+    .article-body img {
+        max-width: 100% !important;
+        width: 100% !important;
+        height: auto !important;
+    }
+
+    /* Force iframes/videos to be responsive */
+    .article-body iframe,
+    .article-body .ql-video {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    /* Prevent any element with inline width from overflowing */
+    .article-body * {
+        max-width: 100% !important;
+        box-sizing: border-box;
+    }
+
+    .article-container {
+        padding: 0.75rem;
+        max-width: 100%;
+        overflow-x: hidden;
     }
 }
 
