@@ -4,23 +4,16 @@ import { generateFromAllSources } from '@/lib/ai-content';
 import { db, auth } from '@/lib/firebase';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { signInAnonymously } from 'firebase/auth';
+import { isAuthorizedAdminRequest } from '@/lib/api-auth';
 
 export const maxDuration = 60; // Set max duration for serverless function (optional, varies by platform)
 
 export async function POST(request) {
     try {
-        // 1. Authentication
-        const apiKey = request.headers.get('x-api-key');
-        const authHeader = request.headers.get('authorization');
-
-        // You should store this securely in env vars
-        const validApiKey = process.env.RSS_API_KEY;
-
-        let isAuthenticated = false;
-        if (apiKey === validApiKey) isAuthenticated = true;
-        if (authHeader && authHeader.startsWith('Bearer ') && authHeader.split(' ')[1] === validApiKey) isAuthenticated = true;
-
-        if (!isAuthenticated) {
+        // 1. Authentication: machine callers send the shared key, while the admin
+        // page calls this route from the site's own origin. The key never reaches
+        // a browser.
+        if (!isAuthorizedAdminRequest(request)) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 

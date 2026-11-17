@@ -139,8 +139,7 @@ export default function RssFeedsAdmin() {
             const response = await fetch('/api/rss/import', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'x-api-key': process.env.NEXT_PUBLIC_RSS_API_KEY || '8fcb0cec763622059af59b1b541af454ff06059e9195aaf0e5616633b4e1fd27'
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ category })
             });
@@ -164,8 +163,7 @@ export default function RssFeedsAdmin() {
             const response = await fetch('/api/rss/import', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'x-api-key': process.env.NEXT_PUBLIC_RSS_API_KEY || '8fcb0cec763622059af59b1b541af454ff06059e9195aaf0e5616633b4e1fd27'
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ action: 'ai_only', category: selectedCategory })
             });

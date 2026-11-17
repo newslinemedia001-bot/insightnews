@@ -2,16 +2,16 @@ import { NextResponse } from 'next/server';
 import { db, auth } from '@/lib/firebase';
 import { collection, getDocs, updateDoc, doc, query, where } from 'firebase/firestore';
 import { signInAnonymously } from 'firebase/auth';
+import { isAuthorizedAdminRequest } from '@/lib/api-auth';
 
 export const maxDuration = 60;
 
 export async function POST(request) {
     try {
-        // Authentication
-        const apiKey = request.headers.get('x-api-key');
-        const validApiKey = process.env.RSS_API_KEY;
-
-        if (apiKey !== validApiKey) {
+        // Authentication: machine callers send the shared key, while the admin
+        // page calls this route from the site's own origin. The key never reaches
+        // a browser.
+        if (!isAuthorizedAdminRequest(request)) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
