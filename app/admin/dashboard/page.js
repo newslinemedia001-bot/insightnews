@@ -193,7 +193,7 @@ export default function AdminDashboard() {
                                     <td style={{ ...cell, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{article.category}</td>
                                     <td style={cell}>{formatDate(article.createdAt)}</td>
                                     <td style={{ ...cell, whiteSpace: 'nowrap' }}>
-                                        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                                        <div style={{ display: 'flex', gap: '1.3rem', alignItems: 'center' }}>
                                             <button
                                                 onClick={() => handleToggleStatus(article)}
                                                 disabled={busy}
@@ -202,11 +202,11 @@ export default function AdminDashboard() {
                                             >
                                                 {published ? <Eye size={16} /> : <EyeOff size={16} />}
                                             </button>
-                                            {!rss && (
+                                            {
                                                 <Link href={`/admin/editor?id=${article.id}`} title="Edit" style={iconButtonStyle('#ffc107', '#000')}>
                                                     <Edit2 size={16} />
                                                 </Link>
-                                            )}
+                                            }
                                             <button
                                                 onClick={() => handleDelete(article)}
                                                 disabled={busy}
